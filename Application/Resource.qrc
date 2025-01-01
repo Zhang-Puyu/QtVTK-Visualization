@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/file.svg</file>
+        <file>icons/info.svg</file>
+        <file>icons/set.svg</file>
+        <file>icons/打开.svg</file>
+        <file>icons/清空.svg</file>
+        <file>icons/刷新.svg</file>
+        <file>icons/颜色.svg</file>
+        <file>Application.ico</file>
+        <file>icons/开始.svg</file>
+        <file>icons/停止.svg</file>
+    </qresource>
+</RCC>
