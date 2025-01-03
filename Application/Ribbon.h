@@ -45,4 +45,6 @@ public:
 
 	QCheckBox* checkScalarbarVisibility = new QCheckBox;
 	QCheckBox* checkAxisVisibility		= new QCheckBox;
+
+	QToolButton* buttonBackgroundImage = new QToolButton;
 };

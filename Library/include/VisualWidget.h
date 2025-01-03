@@ -81,6 +81,10 @@ public:
     /// @brief 设置下半部分背景颜色
     void setBackgroundColorDown(const QColor& color);
 
+    /// @brief 设置背景图片
+	/// @param imageFile 图片文件路径
+    void setBackgroundImage(const QString& imageFile);
+
     /// @brief 设置点大小
     void setPointsSize(int size);
     /// @brief 设置拾取点大小

@@ -5,7 +5,7 @@ DataSingleton*	DataSingleton::m_instance = new DataSingleton();
 Eigen::MatrixXf DataSingleton::m_matrix   = Eigen::MatrixXf();
 QStringList		DataSingleton::m_head	  = QStringList();
 
-const Eigen::MatrixXf& DataSingleton::mat()
+const Eigen::MatrixXf& DataSingleton::m_mat()
 {
 	return m_instance->m_matrix;
 }

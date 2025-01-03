@@ -99,6 +99,11 @@ Ribbon::Ribbon(QWidget* parent)
 
 	ribbonTabWidget->addButton("设置", "背景", buttonBackgroundColor);
 
+	buttonBackgroundImage->setText(tr("图片"));
+	buttonBackgroundImage->setIcon(QIcon(":/icons/icons/图片.svg"));
+
+	ribbonTabWidget->addButton("设置", "背景", buttonBackgroundImage);
+
 	checkAxisVisibility->setText(tr("坐标轴"));
 	checkAxisVisibility->setChecked(true);
 	checkScalarbarVisibility->setText(tr("标量条"));

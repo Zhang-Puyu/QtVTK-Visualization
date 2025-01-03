@@ -10,5 +10,6 @@
         <file>Application.ico</file>
         <file>icons/开始.svg</file>
         <file>icons/停止.svg</file>
+        <file>icons/图片.svg</file>
     </qresource>
 </RCC>

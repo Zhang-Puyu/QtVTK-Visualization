@@ -1,6 +1,5 @@
 #include "vtkCaptionActor2D.h"
 #include "vtkScalarBarActor.h"
-#include "vtkActor2DCollection.h"
 #include "vtkTextActor.h"
 #include "vtkTextProperty.h"
 #include "vtkSTLReader.h"
@@ -16,13 +15,21 @@
 #include "vtkLookupTable.h"
 #include "vtkPolyVertex.h"
 #include "vtkPointData.h"
-#include "vtkPolyLine.h"
-#include "vtkLineSource.h"
+#include "vtkPNGReader.h"
+
+#include <vtkCamera.h>
+#include <vtkImageActor.h>
+#include <vtkImageData.h>
+#include <vtkImageReader2.h>
+#include <vtkImageReader2Factory.h>
+#include <vtkNew.h>
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
 
 #include "qmessagebox.h"
-#include "qdebug.h"
 #include "qevent.h"
-#include "QtConcurrent/qtconcurrentrun.h"
 
 #include "VisualWidget.h"
 #include "Reader.h"
@@ -257,6 +264,64 @@ void VisualWidget::setBackgroundColorDown(const QColor& color)
 		m_renderer->SetBackground(color.redF(), color.greenF(), color.blueF());
 		this->GetRenderWindow()->Render();
 	}
+}
+
+
+void VisualWidget::setBackgroundImage(const QString& imageFile)
+{
+	if (Reader::hasChinese(imageFile))
+	{
+		QMessageBox::critical(this, "错误", "垃圾VTK读不了中文文件", QMessageBox::Ok);
+		return;
+	}
+
+	// 读取图片
+	vtkNew<vtkImageReader2Factory> readerFactory;
+	vtkSmartPointer<vtkImageReader2> imageReader;
+	imageReader.TakeReference(readerFactory->CreateImageReader2(imageFile.toLocal8Bit()));
+	imageReader->SetFileName(imageFile.toLocal8Bit());
+	imageReader->Update();
+
+	vtkSmartPointer<vtkImageData> imageData = imageReader->GetOutput();
+
+	// 创建一个vtkImageActor
+	vtkSmartPointer<vtkImageActor> imageActor = vtkSmartPointer<vtkImageActor>::New();
+	imageActor->SetInputData(imageData);
+
+	// 创建一个新的渲染器用于背景
+	vtkSmartPointer<vtkRenderer> backgroundRenderer = vtkSmartPointer<vtkRenderer>::New();
+	backgroundRenderer->SetLayer(0);
+	backgroundRenderer->InteractiveOff();
+
+	// 将背景图片添加到背景渲染器中
+	backgroundRenderer->AddActor(imageActor);
+
+	// 设置渲染窗口的层数，并添加渲染器
+	this->GetRenderWindow()->SetNumberOfLayers(2);
+	this->GetRenderWindow()->AddRenderer(backgroundRenderer);
+	m_renderer->SetLayer(1);
+
+	// 设置背景相机以填充渲染器
+	double origin[3];
+	double spacing[3];
+	int extent[6];
+	imageData->GetOrigin(origin);
+	imageData->GetSpacing(spacing);
+	imageData->GetExtent(extent);
+
+	vtkSmartPointer<vtkCamera> camera = backgroundRenderer->GetActiveCamera();
+	camera->ParallelProjectionOn();
+
+	double xc = origin[0] + 0.5 * (extent[0] + extent[1]) * spacing[0];
+	double yc = origin[1] + 0.5 * (extent[2] + extent[3]) * spacing[1];
+	double yd = (extent[3] - extent[2] + 1) * spacing[1];
+	double d = camera->GetDistance();
+	camera->SetParallelScale(0.5 * yd);
+	camera->SetFocalPoint(xc, yc, 0.0);
+	camera->SetPosition(xc, yc, d);
+
+	// 渲染窗口
+	this->GetRenderWindow()->Render();
 }
 
 void VisualWidget::setPointsSize(int size)

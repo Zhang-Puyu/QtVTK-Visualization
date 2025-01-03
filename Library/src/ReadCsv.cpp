@@ -8,65 +8,63 @@ using namespace Eigen;
 
 #pragma execution_character_set("utf-8")
 
-MatrixXf Reader::readCsv(const QString& fileName)
+void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, const bool skipFirstRow)
 {
 	// 打开文件
 	QFile file(fileName);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
 		qDebug() << "打开文件失败：" << fileName;
-		return MatrixXf();
+		return;
 	}
+
 	// 读取文件
 	QStringList lines = QTextStream(&file).readAll().trimmed().split("\n");
 
-	// 初始化矩阵
-	MatrixXf mat(lines.count(), lines.first().trimmed().split(",").count());
+	if (!skipFirstRow)
+	{
+		// 读取表头
+		head = lines.first().trimmed().split(",");
+		lines.pop_front();
 
-	for (int row = 0; row < lines.count() ; ++row)
+		// 初始化矩阵
+		// MatrixXf mat(lines.count(), head.count());
+		mat.resize(lines.count(), head.count());
+	}
+	else
+	{
+		mat.resize(lines.count(), lines.first().trimmed().split(",").count());
+
+		head.clear();
+		for (int i = 0; i < mat.cols(); i++)
+			head.push_back(QString("col ") + QString::number(i));
+	}
+
+	int rowCount = lines.size();
+	int row = skipFirstRow ? 1 : 0;
+
+	emit readStarted(rowCount);
+
+	while (row < rowCount)
 	{
 		QStringList cells = lines[row].trimmed().split(",");
 		for (int col = 0; col < cells.count(); ++col)
 			mat(row, col) = cells[col].toFloat();
+		emit readProgress(row++);
 	}
 
-	file.close();
+	emit readFinished(rowCount);
 
-    return mat;
+	file.close();
 }
 
-MatrixXf Reader::readCsv(const QString& fileName, QStringList& head)
+void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName)
 {
-	// 打开文件
-	QFile file(fileName);
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-	{
-		qDebug() << "打开文件失败：" << fileName;
-		return MatrixXf();
-	}
+	QStringList _;
+	readCsv(mat, fileName, _, false);
+}
 
-	// 读取文件
-	QStringList lines = QTextStream(&file).readAll().trimmed().split("\n");
-
-	// 读取表头
-	head = lines.first().trimmed().split(",");
-	lines.pop_front();
-
-	// 初始化矩阵
-	MatrixXf mat(lines.count(), head.count());
-
-	for (int row = 0; row < lines.count(); ++row)
-	{
-		QStringList cells = lines[row].trimmed().split(",");
-		for (int col = 0; col < cells.count(); ++col)
-			mat(row, col) = cells[col].toFloat();
-	}
-
-	file.close();
-
-	qDebug() << "读取文件: " << fileName;
-	qDebug() << "行数: " << mat.rows();;
-	qDebug() << "列数: " << mat.cols();
-
-	return mat;
+void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head)
+{
+	readCsv(mat, fileName, head, true);
 }

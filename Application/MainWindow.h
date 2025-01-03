@@ -3,8 +3,6 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_MainWindow.h"
 
-#include <Eigen/Dense>
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -40,16 +38,22 @@ protected:
     void read(const QString& fileName);
 
     void readCsv(const QString& fileName, bool hasHead = true);
-    void readStl(const QString& fileName);
     void readCnc(const QString& fileName);
+
+    void readFinishedHandler();
 
 private:
     Ui::MainWindowClass* ui;
 
     /// @brief ribbon菜单控件
-    Ribbon*              ri;
+    Ribbon* ri;
+
     /// @brief 显示的数据
-    Eigen::MatrixXf      visualMat;
+    Eigen::MatrixXf m_block;
     /// @brief 读取到的完整数据
-    Eigen::MatrixXf      mat;
+    Eigen::MatrixXf m_mat;
+	/// @brief 数据表头
+    QStringList m_head;
+
+    Reader* m_reader = new Reader();
 };

@@ -20,11 +20,9 @@
     <QtMoc Include="include\VisualLiveWidget.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\Reader.h">
+    <QtMoc Include="include\Reader.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\InteractorStyle.cpp">
@@ -42,5 +40,10 @@
     <ClCompile Include="src\VisualLiveWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MatrixExtention.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

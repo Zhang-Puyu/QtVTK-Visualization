@@ -14,7 +14,7 @@ public:
 	DataSingleton(const DataSingleton&) = delete;
 	DataSingleton& operator=(const DataSingleton&) = delete;
 
-	static const Eigen::MatrixXf& mat();
+	static const Eigen::MatrixXf& m_mat();
 	static const QStringList&     head();
 
 	static void	readCsv(const QString& filename, bool hasHead);

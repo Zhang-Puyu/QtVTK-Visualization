@@ -15,7 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="include\VisualLiveWidget.h" />
-    <ClInclude Include="include\Reader.h" />
+    <QtMoc Include="include\Reader.h" />
     <QtMoc Include="include\VisualWidget.h" />
   </ItemGroup>
   <ItemGroup>
@@ -24,6 +24,9 @@
     <ClCompile Include="src\ReadCnc.cpp" />
     <ClCompile Include="src\ReadCsv.cpp" />
     <ClCompile Include="src\VisualWidget.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="MatrixExtention.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{92A76AD4-FF90-4481-8C94-CEADC73A528E}</ProjectGuid>
