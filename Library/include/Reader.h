@@ -110,8 +110,8 @@ private:
 	/// @param mat 读取的矩阵数据
 	/// @param fileName 文件名
 	/// @param head 矩阵表头，当skipFirstRow = true时才会生效修改
-	/// @param skipFirstRow 读取文件时是否跳过第一行
-	void readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, const bool skipFirstRow);
+	/// @param skipFirstRow 第一行是否为表头
+	void readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, const bool firstRowIsHead);
 
 signals:
 	/// @brief 读取文件开始

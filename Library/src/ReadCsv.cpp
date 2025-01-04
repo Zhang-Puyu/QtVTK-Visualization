@@ -8,7 +8,7 @@ using namespace Eigen;
 
 #pragma execution_character_set("utf-8")
 
-void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, const bool skipFirstRow)
+void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, const bool firstRowIsHead)
 {
 	// 打开文件
 	QFile file(fileName);
@@ -21,7 +21,7 @@ void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList&
 	// 读取文件
 	QStringList lines = QTextStream(&file).readAll().trimmed().split("\n");
 
-	if (!skipFirstRow)
+	if (firstRowIsHead)
 	{
 		// 读取表头
 		head = lines.first().trimmed().split(",");
@@ -41,7 +41,7 @@ void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList&
 	}
 
 	int rowCount = lines.size();
-	int row = skipFirstRow ? 1 : 0;
+	int row = firstRowIsHead ? 1 : 0;
 
 	emit readStarted(rowCount);
 
