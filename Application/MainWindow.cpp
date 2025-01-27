@@ -10,7 +10,6 @@
 #pragma execution_character_set("utf-8")
 
 #include "Reader.h"
-#include <QtConcurrent/qtconcurrentrun.h>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -141,7 +140,7 @@ void MainWindow::readFinishedHandler()
 	ri->comboX->setCurrentIndex(0);
 	ri->comboY->setCurrentIndex(1);
 	ri->comboZ->setCurrentIndex(2);
-	ri->comboF->setCurrentIndex(7);
+	ri->comboF->setCurrentIndex(m_head.length() - 1);
 
 	ri->spinFirstVisualPointNo->setRange(0, m_mat.rows());
 	ri->spinFirstVisualPointNo->setValue(0);
