@@ -39,32 +39,38 @@ Ribbon::Ribbon(QWidget* parent)
 
 	ribbonTabWidget->addButton("显示", "文件", buttonOpenFile);
 
-	buttonClearView->setText(tr("清空"));
-	buttonClearView->setIcon(QIcon(":/icons/icons/清空.svg"));
-
-	ribbonTabWidget->addButton("显示", "文件", buttonClearView);
-
-	QWidget*	 widget		= new QWidget;
+	QWidget* widget = new QWidget;
 	QGridLayout* gridLayout = new QGridLayout(widget);
+	gridLayout->setContentsMargins(3, 6, 3, 6);
+	gridLayout->addWidget(new QLabel("文件编码格式"), 0, 0);
+	gridLayout->addWidget(comboCodec, 1, 0);
+
+	comboCodec->addItem("UTF-8");
+	comboCodec->addItem("GB18030");
+	comboCodec->addItem("UTF-16");
+	comboCodec->addItem("UTF-16BE");
+	comboCodec->addItem("UTF-16LE");
+	comboCodec->addItem("UTF-32");
+	comboCodec->addItem("UTF-32BE");
+	comboCodec->addItem("UTF-32LE");
+
+	ribbonTabWidget->addWidget("显示", "文件", widget);
+
+	widget = new QWidget;
+	gridLayout = new QGridLayout(widget);
 	gridLayout->setContentsMargins(3, 4, 3, 4);
-	gridLayout->addWidget(new QLabel(tr("X")), 0, 0);
-	gridLayout->addWidget(comboX, 0, 1);
-	gridLayout->addWidget(new QLabel(tr("Y")), 1, 0);
-	gridLayout->addWidget(comboY, 1, 1);
-	gridLayout->addWidget(new QLabel(tr(" Z")), 0, 3);
-	gridLayout->addWidget(comboZ, 0, 4);
-	gridLayout->addWidget(new QLabel(tr(" F")), 1, 3);
-	gridLayout->addWidget(comboF, 1, 4);
+	gridLayout->addWidget(new QLabel(tr("X")), 0, 0); gridLayout->addWidget(comboX, 0, 1);
+	gridLayout->addWidget(new QLabel(tr("Y")), 1, 0); gridLayout->addWidget(comboY, 1, 1);
+	gridLayout->addWidget(new QLabel(tr(" Z")), 0, 3); gridLayout->addWidget(comboZ, 0, 4);
+	gridLayout->addWidget(new QLabel(tr(" F")), 1, 3); gridLayout->addWidget(comboF, 1, 4);
 
 	ribbonTabWidget->addWidget("显示", "显示对象", widget);
 
 	widget = new QWidget;
 	gridLayout = new QGridLayout(widget);
 	gridLayout->setContentsMargins(3, 6, 3, 6);
-	gridLayout->addWidget(new QLabel(tr("起始")), 0, 0);
-	gridLayout->addWidget(spinFirstVisualPointNo, 0, 1);
-	gridLayout->addWidget(new QLabel(tr("截止")), 1, 0);
-	gridLayout->addWidget(spinLastVisualPointNo, 1, 1);
+	gridLayout->addWidget(new QLabel(tr("起始")), 0, 0); gridLayout->addWidget(spinFirstVisualPointNo, 0, 1);
+	gridLayout->addWidget(new QLabel(tr("截止")), 1, 0); gridLayout->addWidget(spinLastVisualPointNo, 1, 1);
 
 	spinFirstVisualPointNo->setRange(0, 1);
 	spinFirstVisualPointNo->setValue(0);
@@ -81,7 +87,11 @@ Ribbon::Ribbon(QWidget* parent)
 
 	buttonRefreshView->setText(tr("刷新"));
 	buttonRefreshView->setIcon(QIcon(":/icons/icons/刷新.svg"));
-	ribbonTabWidget->addButton("显示", "", buttonRefreshView);
+	ribbonTabWidget->addButton("显示", "显示", buttonRefreshView);
+
+	buttonClearView->setText(tr("清空"));
+	buttonClearView->setIcon(QIcon(":/icons/icons/清空.svg"));
+	ribbonTabWidget->addButton("显示", "显示", buttonClearView);
 
 	/***************************************************************/
 
@@ -132,6 +142,22 @@ Ribbon::Ribbon(QWidget* parent)
 
 	ribbonTabWidget->addWidget("设置", "点尺寸", widget);
 
+	buttonPickPoint->setText(tr("拾取"));
+	buttonPickPoint->setIcon(QIcon(":/icons/icons/跳转.svg"));
+	buttonPickPoint->setToolTip(tr("按左右方向键可跳转选中到前后点，按上下方向键可跳转选中到首尾点"));
+
+	QMenu* menuPick = new QMenu("跳转");
+	menuPick->addAction(actionPickFirstPoint); menuPick->addAction(actionPickLastPoint);
+	menuPick->addAction(actionPickMaxXPoint); menuPick->addAction(actionPickMinXPoint);
+	menuPick->addAction(actionPickMaxYPoint); menuPick->addAction(actionPickMinYPoint);
+	menuPick->addAction(actionPickMaxZPoint); menuPick->addAction(actionPickMinZPoint);
+	menuPick->addAction(actionPickMaxFPoint); menuPick->addAction(actionPickMinFPoint);
+
+	buttonPickPoint->setPopupMode(QToolButton::MenuButtonPopup);
+	buttonPickPoint->setMenu(menuPick);
+
+	ribbonTabWidget->addButton("设置", "跳转", buttonPickPoint);
+
 	/***************************************************************/
 
 	buttonStartLiveView->setText(tr("开始"));
@@ -161,4 +187,15 @@ Ribbon::Ribbon(QWidget* parent)
 	spinLiveDuration->setEnabled(false);
 
 	ribbonTabWidget->addWidget("动态显示", "设置", widget);
+}
+
+void Ribbon::resetSpinVisualPointNo()
+{
+	spinFirstVisualPointNo->setMaximum(0);
+	spinFirstVisualPointNo->setValue(0);
+	spinFirstVisualPointNo->setMaximum(0);
+
+	spinLastVisualPointNo->setMinimum(0);
+	spinLastVisualPointNo->setValue(0);
+	spinLastVisualPointNo->setMinimum(0);
 }

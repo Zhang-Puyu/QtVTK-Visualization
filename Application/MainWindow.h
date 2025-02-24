@@ -20,6 +20,9 @@ public:
 	/// @param id 点的索引id
     void pick(vtkIdType id);
 
+	void pickMax();
+	void pickMin();
+
 	/// @brief 开始动态显示
 	void startLiveView();
 	/// @brief 停止动态显示

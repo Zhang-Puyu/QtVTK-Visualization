@@ -26,7 +26,7 @@
     <ClCompile Include="src\VisualWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MatrixExtention.hpp" />
+    <ClInclude Include="include\MatrixExtention.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{92A76AD4-FF90-4481-8C94-CEADC73A528E}</ProjectGuid>

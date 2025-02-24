@@ -51,6 +51,11 @@ VTK_MODULE_INIT(vtkRenderingVolumeOpenGL2);
 
 #include "InteractorStyle.h"
 
+struct ValueRangeIndexes
+{
+    unsigned int x = 0, y = 0, z = 0, f = 0;
+};
+
 class VisualWidget : public QVTKOpenGLWidget
 {
     Q_OBJECT
@@ -90,13 +95,19 @@ public:
     /// @brief 设置拾取点大小
     void setPickedPointSize(int size);
 
+    /// @brief 设置色柱可见性
     void setScalarbarVisibility(bool visibility) { m_scalarbarActor->SetVisibility(visibility); this->GetRenderWindow()->Render(); }
+	/// @brief 设置坐标轴可见性
 	void setAxisVisibility(bool visibility)      { m_axesActor->SetVisibility(visibility);      this->GetRenderWindow()->Render(); }
 
     /// @brief 拾取点
     void pick(const vtkIdType& id);
-
-    friend class LiveViewModel;
+    
+    void pickFirst() { pick(firstPointId); } void pickLast() { pick(lastPointId()); }
+    void pickMaxX() { pick(indexsMax.x); } void pickMinX() { pick(indexsMin.x); }
+	void pickMaxY() { pick(indexsMax.y); } void pickMinY() { pick(indexsMin.y); }
+	void pickMaxZ() { pick(indexsMax.z); } void pickMinZ() { pick(indexsMin.z); }
+	void pickMaxF() { pick(indexsMax.f); } void pickMinF() { pick(indexsMin.f); }
 
 protected:
     vtkSmartPointer<vtkRenderer>		m_renderer       = vtkSmartPointer<vtkRenderer>::New();
@@ -118,6 +129,9 @@ protected:
 
     const vtkIdType lastPointId() { return m_points->GetNumberOfPoints() - 1; }
     const vtkIdType firstPointId = 0;
+
+    ValueRangeIndexes indexsMax;
+	ValueRangeIndexes indexsMin;
 
     vtkIdType m_pickedPointId = NO_POINT_PICKED;
 

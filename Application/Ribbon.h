@@ -8,6 +8,8 @@
 #include "qcombobox.h"
 #include "qcheckbox.h"
 
+#pragma execution_character_set("utf-8")
+
 class Ribbon : public QWidget
 {
 	Q_OBJECT
@@ -40,6 +42,13 @@ public:
 	QSpinBox* spinLiveInterval = new QSpinBox;
 	QSpinBox* spinLiveDuration = new QSpinBox;
 
+	QToolButton* buttonPickPoint = new QToolButton;
+	QAction* actionPickFirstPoint = new QAction(tr("第一个点")); QAction* actionPickLastPoint = new QAction("最后一个点");
+	QAction* actionPickMaxXPoint = new QAction("X最大点"); QAction* actionPickMinXPoint = new QAction("X最小点");
+	QAction* actionPickMaxYPoint = new QAction("Y最大点"); QAction* actionPickMinYPoint = new QAction("Y最小点");
+	QAction* actionPickMaxZPoint = new QAction("Z最大点"); QAction* actionPickMinZPoint = new QAction("Z最小点");
+	QAction* actionPickMaxFPoint = new QAction("特征值最大点"); QAction* actionPickMinFPoint = new QAction("特征值最小点");
+
 	QToolButton* buttonStartLiveView = new QToolButton;
 	QToolButton* buttonStopLiveView  = new QToolButton;
 
@@ -47,4 +56,8 @@ public:
 	QCheckBox* checkAxisVisibility		= new QCheckBox;
 
 	QToolButton* buttonBackgroundImage = new QToolButton;
+
+	QComboBox* comboCodec = new QComboBox;
+
+	void resetSpinVisualPointNo();
 };

@@ -100,13 +100,13 @@ void Reader::paraseGCodeLine(const QString& line, VectorXf& point)
 	}
 }
 
-void Reader::readCnc(Eigen::MatrixXf& mat, const QString& fileName)
+void Reader::readCnc(Eigen::MatrixXf& mat, const QString& fileName, const QString& codec)
 {
 	QStringList _;
-	readCnc(mat, fileName, _);
+	readCnc(mat, fileName, _, codec);
 }
 
-void Reader::readCnc(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head)
+void Reader::readCnc(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, const QString& codec)
 {
 	// 打开文件
 	QFile file(fileName);
@@ -159,7 +159,11 @@ void Reader::readCnc(Eigen::MatrixXf& mat, const QString& fileName, QStringList&
 	//return mat;
 
 	// 一次性读取文件
-	QStringList lines = QTextStream(&file).readAll().trimmed().split("\n");
+	// 读取文件
+	QTextStream in(&file);
+	// 指定文件编码格式
+	in.setCodec(codec.toLocal8Bit());
+	QStringList lines = in.readAll().trimmed().split("\n");
 
 	int rowCount = lines.size();
 	int row = 0;

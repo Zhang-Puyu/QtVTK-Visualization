@@ -33,6 +33,7 @@
 
 #include "VisualWidget.h"
 #include "Reader.h"
+#include "MatrixExtention.hpp"
 
 #pragma execution_character_set("utf-8")
 
@@ -129,6 +130,11 @@ void VisualWidget::visualizePoints(const VectorXf& X, const VectorXf& Y, const V
 	// 取消选中的点
 	pick(NO_POINT_PICKED);
 
+	// 记录最值索引
+	X.minCoeff(&indexsMin.x); X.maxCoeff(&indexsMax.x);
+	Y.minCoeff(&indexsMin.y); Y.maxCoeff(&indexsMax.y);
+	Z.minCoeff(&indexsMin.z); Z.maxCoeff(&indexsMax.z);
+
 	//创建vtkPolyData对象
 	vtkSmartPointer<vtkPolyData> polyData = vtkSmartPointer<vtkPolyData>::New();
 	polyData->SetPoints(m_points);
@@ -165,8 +171,13 @@ void VisualWidget::visualizePoints(const VectorXf& X, const VectorXf& Y, const V
 	// 取消选中的点
 	pick(NO_POINT_PICKED);
 
-	float minScalar = F.minCoeff(); 
-	float maxScalar = F.maxCoeff();
+	// 记录最值索引
+	float minScalar = F.minCoeff(&indexsMin.f); 
+	float maxScalar = F.maxCoeff(&indexsMax.f);
+
+	X.minCoeff(&indexsMin.x); X.maxCoeff(&indexsMax.x);
+	Y.minCoeff(&indexsMin.y); Y.maxCoeff(&indexsMax.y);
+	Z.minCoeff(&indexsMin.z); Z.maxCoeff(&indexsMax.z);
 
 	// 将以上三部分数据组合成一个结构为vtkUnstructureGrid数据集
 	vtkSmartPointer<vtkUnstructuredGrid> grid = vtkSmartPointer<vtkUnstructuredGrid>::New();
@@ -181,7 +192,7 @@ void VisualWidget::visualizePoints(const VectorXf& X, const VectorXf& Y, const V
 
 	if (Reader::hasChinese(fName))
 	{
-		QMessageBox::warning(this, "警告", "ScalarBar标题不支持显示中文字符", QMessageBox::Ok);
+		QMessageBox::warning(this, "警告", "ScalarBar标题不支持显示当前字符", QMessageBox::Ok);
 		m_scalarbarActor->SetTitle("Scalar");
 	}
 	else

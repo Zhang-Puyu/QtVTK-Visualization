@@ -42,7 +42,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MatrixExtention.hpp">
+    <ClInclude Include="include\MatrixExtention.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

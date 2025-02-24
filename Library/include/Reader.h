@@ -19,8 +19,7 @@ public:
 	/// @brief 判断字符串是否包含中文字符
 	static bool hasChinese(const QString& str)
 	{
-		QRegularExpression regex("[\\u4e00-\\u9fa5]+");
-		return regex.match(str).hasMatch();
+		return str.contains(QRegExp("[\\x4e00-\\x9fa5]+"));
 	}
 
 	/// @brief 为数据读取过程显示进度窗口
@@ -59,24 +58,28 @@ public:
 	/// @brief 读取csv文件
 	/// @param mat 读取的矩阵数据
 	/// @param fileName 文件名
-	void readCsv(Eigen::MatrixXf& mat, const QString& fileName);
+	void readCsv(Eigen::MatrixXf& mat, const QString& fileName,
+		const QString& codec = "UTF-8");
 
 	/// @brief 读取csv文件
 	/// @param mat 读取的矩阵数据
 	/// @param fileName 文件名
 	/// @param head csv第一行作为表头
-	void readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head);
+	void readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, 
+		const QString& codec = "UTF-8");
 
 	/// @brief 读取数控刀轨文件
 	/// @param mat 刀位点矩阵
 	/// @param fileName 文件名
-	void readCnc(Eigen::MatrixXf& mat, const QString& fileName);
+	void readCnc(Eigen::MatrixXf& mat, const QString& fileName, 
+		const QString& codec = "UTF-8");
 
 	/// @brief 读取数控刀轨文件
 	/// @param mat 刀位点矩阵
 	/// @param fileName 文件名
 	/// @param head 刀位点矩阵
-	void readCnc(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head);
+	void readCnc(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, 
+		const QString& codec = "UTF-8");
 
 private:
 	/// @brief 匹配正浮点数
@@ -109,9 +112,13 @@ private:
 	/// @brief 读取csv文件
 	/// @param mat 读取的矩阵数据
 	/// @param fileName 文件名
+	/// @param codec 文件编码格式
 	/// @param head 矩阵表头，当skipFirstRow = true时才会生效修改
 	/// @param skipFirstRow 第一行是否为表头
-	void readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, const bool firstRowIsHead);
+	void readCsv(Eigen::MatrixXf& mat, 
+		const QString& fileName, const QString& codec,
+		QStringList& head, 
+		const bool firstRowIsHead);
 
 signals:
 	/// @brief 读取文件开始

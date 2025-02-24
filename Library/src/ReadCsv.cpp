@@ -8,7 +8,9 @@ using namespace Eigen;
 
 #pragma execution_character_set("utf-8")
 
-void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, const bool firstRowIsHead)
+void Reader::readCsv(Eigen::MatrixXf& mat, 
+	const QString& fileName, const QString& codec, QStringList& head,
+	const bool firstRowIsHead)
 {
 	// 打开文件
 	QFile file(fileName);
@@ -19,7 +21,10 @@ void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList&
 	}
 
 	// 读取文件
-	QStringList lines = QTextStream(&file).readAll().trimmed().split("\n");
+    QTextStream in(&file);
+	// 指定文件编码格式
+    in.setCodec(codec.toLocal8Bit());
+    QStringList lines = in.readAll().trimmed().split("\n");
 
 	if (firstRowIsHead)
 	{
@@ -41,7 +46,7 @@ void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList&
 	}
 
 	int rowCount = lines.size();
-	int row = firstRowIsHead ? 1 : 0;
+	int row = 0;
 
 	emit readStarted(rowCount);
 
@@ -58,13 +63,13 @@ void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList&
 	file.close();
 }
 
-void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName)
+void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, const QString& codec)
 {
 	QStringList _;
-	readCsv(mat, fileName, _, false);
+	readCsv(mat, fileName, codec, _, false);
 }
 
-void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head)
+void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, const QString& codec)
 {
-	readCsv(mat, fileName, head, true);
+	readCsv(mat, fileName, codec, head, true);
 }

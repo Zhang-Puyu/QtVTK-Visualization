@@ -11,5 +11,6 @@
         <file>icons/开始.svg</file>
         <file>icons/停止.svg</file>
         <file>icons/图片.svg</file>
+        <file>icons/跳转.svg</file>
     </qresource>
 </RCC>

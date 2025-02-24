@@ -10,6 +10,7 @@
 #pragma execution_character_set("utf-8")
 
 #include "Reader.h"
+#include "MatrixExtention.hpp"
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
@@ -75,6 +76,17 @@ MainWindow::MainWindow(QWidget* parent)
 	// 显示拾取点
 	connect(ui->visualWidget, &VisualWidget::pointPicked, this, &MainWindow::pick);
 
+	connect(ri->actionPickFirstPoint, &QAction::triggered, ui->visualWidget, &VisualLiveWidget::pickFirst);
+	connect(ri->actionPickLastPoint, &QAction::triggered, ui->visualWidget, &VisualLiveWidget::pickLast);
+	connect(ri->actionPickMaxXPoint, &QAction::triggered, ui->visualWidget, &VisualLiveWidget::pickMaxX);
+	connect(ri->actionPickMinXPoint, &QAction::triggered, ui->visualWidget, &VisualLiveWidget::pickMinX);
+	connect(ri->actionPickMaxYPoint, &QAction::triggered, ui->visualWidget, &VisualLiveWidget::pickMaxY);
+	connect(ri->actionPickMinYPoint, &QAction::triggered, ui->visualWidget, &VisualLiveWidget::pickMinY);
+	connect(ri->actionPickMaxZPoint, &QAction::triggered, ui->visualWidget, &VisualLiveWidget::pickMaxZ);
+	connect(ri->actionPickMinZPoint, &QAction::triggered, ui->visualWidget, &VisualLiveWidget::pickMinZ);
+	connect(ri->actionPickMaxFPoint, &QAction::triggered, ui->visualWidget, &VisualLiveWidget::pickMaxF);
+	connect(ri->actionPickMinFPoint, &QAction::triggered, ui->visualWidget, &VisualLiveWidget::pickMinF);
+
 	// 动态刷新逐个加载点
 	connect(ri->buttonStartLiveView, &QToolButton::clicked, this, &MainWindow::startLiveView);
 	connect(ri->buttonStopLiveView,  &QToolButton::clicked, this, &MainWindow::stopLiveView);
@@ -109,14 +121,14 @@ void MainWindow::readCsv(const QString& fileName, bool hasHead)
 {
 	if (hasHead)
 	{
-		m_reader->readCsv(m_mat, fileName, m_head);
+		m_reader->readCsv(m_mat, fileName, m_head, ri->comboCodec->currentText());
 	}
 	else
 	{
 		for (int i = 0; i < m_mat.cols(); i++)
 			m_head.push_back(QString("col ") + QString::number(i));
 
-		m_reader->readCsv(m_mat, fileName);
+		m_reader->readCsv(m_mat, fileName, ri->comboCodec->currentText());
 	}
 
 	readFinishedHandler();
@@ -180,6 +192,8 @@ void MainWindow::clear()
 	ri->comboZ->clear();
 	ri->comboF->clear();
 	ui->statusBar->showMessage(tr("支持的文件类型：*.stl  *.csv  *.nc.  *.cls"));
+
+	ri->resetSpinVisualPointNo();
 }
 
 void MainWindow::pick(vtkIdType id)
@@ -203,6 +217,26 @@ void MainWindow::pick(vtkIdType id)
 	ui->labelPickedZ->setText(QString::number(z));
 	ui->labelPickedF->setText(QString::number(f));
 	ui->labelPointId->setText(QString::number(id));
+}
+
+void MainWindow::pickMax()
+{
+	if (hasData())
+	{
+		int maxIndex;
+		m_mat.col(ri->comboF->currentIndex()).maxCoeff(&maxIndex);
+		pick(maxIndex);
+	}
+}
+
+void MainWindow::pickMin()
+{
+	if (hasData())
+	{
+		int minIndex;
+		m_mat.col(ri->comboF->currentIndex()).minCoeff(&minIndex);
+		pick(minIndex);
+	}
 }
 
 void MainWindow::startLiveView()
