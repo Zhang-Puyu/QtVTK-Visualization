@@ -51,6 +51,7 @@ VTK_MODULE_INIT(vtkRenderingVolumeOpenGL2);
 
 #include "InteractorStyle.h"
 
+/// @brief X、Y、Z、特征值的最值对应点的索引集合
 struct ValueRangeIndexes
 {
     unsigned int x = 0, y = 0, z = 0, f = 0;
@@ -104,10 +105,10 @@ public:
     void pick(const vtkIdType& id);
     
     void pickFirst() { pick(firstPointId); } void pickLast() { pick(lastPointId()); }
-    void pickMaxX() { pick(indexsMax.x); } void pickMinX() { pick(indexsMin.x); }
-	void pickMaxY() { pick(indexsMax.y); } void pickMinY() { pick(indexsMin.y); }
-	void pickMaxZ() { pick(indexsMax.z); } void pickMinZ() { pick(indexsMin.z); }
-	void pickMaxF() { pick(indexsMax.f); } void pickMinF() { pick(indexsMin.f); }
+    void pickMaxX()  { pick(indexsMax.x); }  void pickMinX() { pick(indexsMin.x); }
+	void pickMaxY()  { pick(indexsMax.y); }  void pickMinY() { pick(indexsMin.y); }
+	void pickMaxZ()  { pick(indexsMax.z); }  void pickMinZ() { pick(indexsMin.z); }
+	void pickMaxF()  { pick(indexsMax.f); }  void pickMinF() { pick(indexsMin.f); }
 
 protected:
     vtkSmartPointer<vtkRenderer>		m_renderer       = vtkSmartPointer<vtkRenderer>::New();
@@ -127,10 +128,13 @@ protected:
 
     QVector<vtkSmartPointer<vtkActor>> m_stlActors;
 
+	/// @brief 最后一个点的索引
     const vtkIdType lastPointId() { return m_points->GetNumberOfPoints() - 1; }
+	/// @brief 第一个点的索引
     const vtkIdType firstPointId = 0;
-
+	/// @brief X、Y、Z、特征值分别最大的点的索引集合
     ValueRangeIndexes indexsMax;
+	/// @brief X、Y、Z、特征值分布最小的点的索引集合
 	ValueRangeIndexes indexsMin;
 
     vtkIdType m_pickedPointId = NO_POINT_PICKED;
@@ -141,7 +145,8 @@ protected:
     virtual void keyReleaseEvent(QKeyEvent* event) override;
 
 signals:
-    void pointPicked(vtkIdType pointId);
+    /// @brief 拾取点信号
+    void picked(vtkIdType pointId);
 };
  
 

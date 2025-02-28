@@ -360,14 +360,14 @@ void VisualWidget::pick(const vtkIdType& id)
 			m_pickedPointActor->SetVisibility(true);
 			this->GetRenderWindow()->Render();
 
-			emit pointPicked(id);
+			emit picked(id);
 		}
 		else // id == -1
 		{
 			m_pickedPointActor->SetVisibility(false);
 			this->GetRenderWindow()->Render();
 
-			emit pointPicked(NO_POINT_PICKED);
+			emit picked(NO_POINT_PICKED);
 		}
 	}
 }

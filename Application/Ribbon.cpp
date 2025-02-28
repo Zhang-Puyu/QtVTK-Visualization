@@ -2,11 +2,9 @@
 
 #include "RibbonTab.h"
 #include "RibbonTabWidget.h"
-#include "RibbonGroup.h"
 
-#include <QVBoxLayout>
-#include <QMenu>
-#include <QLabel>
+#include "qmenu.h"
+#include "qlabel.h"
 
 #pragma execution_character_set("utf-8")
 
@@ -84,6 +82,12 @@ Ribbon::Ribbon(QWidget* parent)
 	connect(spinLastVisualPointNo,  valueChanged, [=](int value) { spinFirstVisualPointNo->setMaximum(--value); });
 
 	ribbonTabWidget->addWidget("显示", "裁剪数据", widget);
+
+	buttonExportVisualPoints->setText(tr("导出"));
+	buttonExportVisualPoints->setIcon(QIcon(":/icons/icons/导出.svg"));
+	buttonExportVisualPoints->setToolTip(tr("导出当前显示的点到csv文件"));
+
+	ribbonTabWidget->addButton("显示", "裁剪数据", buttonExportVisualPoints);
 
 	buttonRefreshView->setText(tr("刷新"));
 	buttonRefreshView->setIcon(QIcon(":/icons/icons/刷新.svg"));
@@ -191,11 +195,11 @@ Ribbon::Ribbon(QWidget* parent)
 
 void Ribbon::resetSpinVisualPointNo()
 {
-	spinFirstVisualPointNo->setMaximum(0);
+	spinFirstVisualPointNo->setMinimum(0);
 	spinFirstVisualPointNo->setValue(0);
 	spinFirstVisualPointNo->setMaximum(0);
 
-	spinLastVisualPointNo->setMinimum(0);
-	spinLastVisualPointNo->setValue(0);
-	spinLastVisualPointNo->setMinimum(0);
+	spinLastVisualPointNo->setMinimum(1);
+	spinLastVisualPointNo->setValue(1);
+	spinLastVisualPointNo->setMaximum(1);
 }

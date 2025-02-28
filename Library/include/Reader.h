@@ -17,8 +17,7 @@ public:
 	};
 
 	/// @brief 判断字符串是否包含中文字符
-	static bool hasChinese(const QString& str)
-	{
+	static bool hasChinese(const QString& str) {
 		return str.contains(QRegExp("[\\x4e00-\\x9fa5]+"));
 	}
 
@@ -58,6 +57,7 @@ public:
 	/// @brief 读取csv文件
 	/// @param mat 读取的矩阵数据
 	/// @param fileName 文件名
+	/// @param codec 编码格式
 	void readCsv(Eigen::MatrixXf& mat, const QString& fileName,
 		const QString& codec = "UTF-8");
 
@@ -65,12 +65,14 @@ public:
 	/// @param mat 读取的矩阵数据
 	/// @param fileName 文件名
 	/// @param head csv第一行作为表头
+	/// @param codec 编码格式
 	void readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, 
 		const QString& codec = "UTF-8");
 
 	/// @brief 读取数控刀轨文件
 	/// @param mat 刀位点矩阵
 	/// @param fileName 文件名
+	/// @param codec 编码格式
 	void readCnc(Eigen::MatrixXf& mat, const QString& fileName, 
 		const QString& codec = "UTF-8");
 
@@ -78,7 +80,16 @@ public:
 	/// @param mat 刀位点矩阵
 	/// @param fileName 文件名
 	/// @param head 刀位点矩阵
+	/// @param codec 编码格式
 	void readCnc(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, 
+		const QString& codec = "UTF-8");
+
+	/// @brief 写入csv文件
+	/// @param mat 要写入的矩阵数据
+	/// @param fileName 文件名
+	/// @param head 表头
+	/// @param codec 编码格式
+	void writeCsv(const Eigen::MatrixXf& mat, const QString& fileName, QStringList& head,
 		const QString& codec = "UTF-8");
 
 private:
@@ -116,7 +127,8 @@ private:
 	/// @param head 矩阵表头，当skipFirstRow = true时才会生效修改
 	/// @param skipFirstRow 第一行是否为表头
 	void readCsv(Eigen::MatrixXf& mat, 
-		const QString& fileName, const QString& codec,
+		const QString& fileName, 
+		const QString& codec,
 		QStringList& head, 
 		const bool firstRowIsHead);
 

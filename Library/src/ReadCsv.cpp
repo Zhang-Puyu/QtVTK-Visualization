@@ -33,7 +33,6 @@ void Reader::readCsv(Eigen::MatrixXf& mat,
 		lines.pop_front();
 
 		// 初始化矩阵
-		// MatrixXf mat(lines.count(), head.count());
 		mat.resize(lines.count(), head.count());
 	}
 	else
@@ -72,4 +71,38 @@ void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, const QStrin
 void Reader::readCsv(Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, const QString& codec)
 {
 	readCsv(mat, fileName, codec, head, true);
+}
+
+void Reader::writeCsv(const Eigen::MatrixXf& mat, const QString& fileName, QStringList& head, const QString& codec)
+{
+	// 打开文件
+	QFile file(fileName);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+	{
+		qDebug() << "打开文件失败：" << fileName;
+		return;
+	}
+	// 指定文件编码格式
+	QTextStream out(&file);
+	out.setCodec(codec.toLocal8Bit());
+	// 写入表头
+	for (int i = 0; i < head.length(); ++i)
+	{
+		out << head[i];
+		if (i < head.length() - 1)
+			out << ",";
+	}
+	out << "\n";
+	// 写入数据
+	for (int row = 0; row < mat.rows(); ++row)
+	{
+		for (int col = 0; col < mat.cols(); ++col)
+		{
+			out << mat(row, col);
+			if (col < mat.cols() - 1)
+				out << ",";
+		}
+		out << "\n";
+	}
+	file.close();
 }

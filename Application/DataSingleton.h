@@ -10,8 +10,9 @@ class DataSingleton : public QObject
 	Q_OBJECT
 
 public:
-	// 禁止拷贝和赋值操作
+	/// @brief 禁止拷贝操作
 	DataSingleton(const DataSingleton&) = delete;
+	/// @brief 禁止赋值操作
 	DataSingleton& operator=(const DataSingleton&) = delete;
 
 	static const Eigen::MatrixXf& m_mat();
@@ -21,6 +22,7 @@ public:
 	static void	readCnc(const QString& fileName);
 
 private:
+	/// @brief 单例模式
 	DataSingleton(QObject* parent = nullptr);
 
 	static DataSingleton*  m_instance;

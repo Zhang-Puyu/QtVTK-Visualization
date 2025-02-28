@@ -23,15 +23,13 @@ MainWindow::MainWindow(QWidget* parent)
 	// 允许文件拖入
 	this->setAcceptDrops(true);
 	// 打开文件
-	connect(ri->buttonOpenFile, &QToolButton::clicked, this, &MainWindow::open);
+	connect(ri->buttonOpenFile, &QToolButton::clicked, this, &MainWindow::openFile);
 	connect(ri->actionOpenCsv_NotSkipFirstRow, &QAction::triggered, [=]() {
-		QString fileName = QFileDialog::getOpenFileName(this, tr("打开csv文件，第一行为数据"), "",
-			tr("CSV Files (*.csv)"));
+		QString fileName = QFileDialog::getOpenFileName(this, tr("打开csv文件，第一行为数据"), "", tr("CSV Files (*.csv)"));
 		if (!fileName.isEmpty()) readCsv(fileName, false);
 		});
 	connect(ri->actionOpenCsv_AndSkipFirstRow, &QAction::triggered, [=]() {
-		QString fileName = QFileDialog::getOpenFileName(this, tr("打开csv文件，第一行为表头"), "",
-			tr("CSV Files (*.csv)"));
+		QString fileName = QFileDialog::getOpenFileName(this, tr("打开csv文件，第一行为表头"), "", tr("CSV Files (*.csv)"));
 		if (!fileName.isEmpty()) readCsv(fileName, true);
 		});	
 	// 清空视图
@@ -53,28 +51,27 @@ MainWindow::MainWindow(QWidget* parent)
 		});
 	// 设置背景图片
 	connect(ri->buttonBackgroundImage, &QToolButton::clicked, [=]() {
-		QString fileName = QFileDialog::getOpenFileName(this, tr("图片文件名和路径不要带中文"), "",
-			tr("图片 (*.png *.jpg)"));
-		if (!fileName.isEmpty())
-			ui->visualWidget->setBackgroundImage(fileName);
+		QString fileName = QFileDialog::getOpenFileName(this, tr("图片文件名和路径不要带中文"), "", tr("图片 (*.png *.jpg)"));
+		if (!fileName.isEmpty()) ui->visualWidget->setBackgroundImage(fileName);
 		});
 	// 设置点尺寸
-	connect(ri->spinPointSize, QOverload<int>::of(&QSpinBox::valueChanged),
-		ui->visualWidget, &VisualWidget::setPointsSize);
+	connect(ri->spinPointSize, QOverload<int>::of(&QSpinBox::valueChanged), ui->visualWidget, &VisualWidget::setPointsSize);
 	ui->visualWidget->setPointsSize(ri->spinPointSize->value());
-	connect(ri->spinPickedPointSize, QOverload<int>::of(&QSpinBox::valueChanged),
-		ui->visualWidget, &VisualWidget::setPickedPointSize);
+	connect(ri->spinPickedPointSize, QOverload<int>::of(&QSpinBox::valueChanged), ui->visualWidget, &VisualWidget::setPickedPointSize);
 	ui->visualWidget->setPickedPointSize(ri->spinPickedPointSize->value());
 	// 刷新视图
-	connect(ri->buttonRefreshView, &QToolButton::clicked, this, &MainWindow::refresh);
+	connect(ri->buttonRefreshView, &QToolButton::clicked, this, &MainWindow::refreshView);
 
 	// 版权声明
 	QLabel* copyright = new QLabel("Copyright (C) 2024 西北工业大学-张璞玉. a11 rights reserved.");
 	ui->statusBar->addPermanentWidget(copyright);
 	ui->statusBar->showMessage(tr("支持的文件类型：*.stl  *.csv  *.nc.  *.cls"));
 
+	// 导出显示的点
+	connect(ri->buttonExportVisualPoints, &QToolButton::clicked, this, &MainWindow::exportVisualPoints);
+
 	// 显示拾取点
-	connect(ui->visualWidget, &VisualWidget::pointPicked, this, &MainWindow::pick);
+	connect(ui->visualWidget, &VisualWidget::picked, this, &MainWindow::pickedEvent);
 
 	connect(ri->actionPickFirstPoint, &QAction::triggered, ui->visualWidget, &VisualLiveWidget::pickFirst);
 	connect(ri->actionPickLastPoint, &QAction::triggered, ui->visualWidget, &VisualLiveWidget::pickLast);
@@ -97,15 +94,15 @@ MainWindow::MainWindow(QWidget* parent)
 }
 
 
-void MainWindow::open()
+void MainWindow::openFile()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("打开文件"), "",
 		tr("CSV Files (*.csv);;STL Files (*.stl);;CNC (*.cls *.nc)"));
 	if (!fileName.isEmpty())
-		read(fileName);
+		readFile(fileName);
 }
 
-void MainWindow::read(const QString& fileName)
+void MainWindow::readFile(const QString& fileName)
 {
 	ui->statusBar->showMessage(QFileInfo(fileName).fileName());
 
@@ -125,24 +122,24 @@ void MainWindow::readCsv(const QString& fileName, bool hasHead)
 	}
 	else
 	{
+		m_reader->readCsv(m_mat, fileName, ri->comboCodec->currentText());
+
+		m_head.clear();
 		for (int i = 0; i < m_mat.cols(); i++)
 			m_head.push_back(QString("col ") + QString::number(i));
-
-		m_reader->readCsv(m_mat, fileName, ri->comboCodec->currentText());
 	}
 
-	readFinishedHandler();
+	readEvent();
 }
-
 
 void MainWindow::readCnc(const QString& fileName)
 {
 	m_reader->readCnc(m_mat, fileName, m_head);
 
-	readFinishedHandler();
+	readEvent();
 }
 
-void MainWindow::readFinishedHandler()
+void MainWindow::readEvent()
 {
 	ri->comboX->clear(); ri->comboX->addItems(m_head);
 	ri->comboY->clear(); ri->comboY->addItems(m_head);
@@ -159,12 +156,12 @@ void MainWindow::readFinishedHandler()
 	ri->spinLastVisualPointNo->setRange(0, m_mat.rows() - 1);
 	ri->spinLastVisualPointNo->setValue(m_mat.rows() - 1);
 
-	refresh();
+	refreshView();
 
 	QMessageBox::information(this, "读取成功", "读取到 " + QString::number(m_mat.rows()) + " 个点");
 }
 
-void MainWindow::refresh()
+void MainWindow::refreshView()
 {
 	if (hasData())
 	{
@@ -172,13 +169,13 @@ void MainWindow::refresh()
 		int startCol = 0;
 		int rowCount = ri->spinLastVisualPointNo->value() - startRow + 1;
 		int colCount = m_mat.cols();
-		m_block = m_mat.block(startRow, startCol, rowCount, colCount);
+		m_visualMat = m_mat.block(startRow, startCol, rowCount, colCount);
 
 		ui->visualWidget->visualizePoints(
-			m_block.col(ri->comboX->currentIndex()),
-			m_block.col(ri->comboY->currentIndex()),
-			m_block.col(ri->comboZ->currentIndex()),
-			m_block.col(ri->comboF->currentIndex()),
+			m_visualMat.col(ri->comboX->currentIndex()),
+			m_visualMat.col(ri->comboY->currentIndex()),
+			m_visualMat.col(ri->comboZ->currentIndex()),
+			m_visualMat.col(ri->comboF->currentIndex()),
 			ri->comboF->currentText());
 		ui->labelFeatureName->setText(ri->comboF->currentText() + ": ");
 	}
@@ -193,12 +190,28 @@ void MainWindow::clear()
 	ri->comboF->clear();
 	ui->statusBar->showMessage(tr("支持的文件类型：*.stl  *.csv  *.nc.  *.cls"));
 
+	m_visualMat.resize(0, 0);
+	m_mat.resize(0, 0);
+
 	ri->resetSpinVisualPointNo();
 }
 
-void MainWindow::pick(vtkIdType id)
+void MainWindow::exportVisualPoints()
 {
-	if (id < 0 || id >= m_block.rows())
+	if (hasData())
+	{
+		QString fileName = QFileDialog::getSaveFileName(this, tr("导出所显示的点"), "", tr("CSV Files (*.csv)"));
+		if (!fileName.isEmpty())
+		{
+			m_reader->writeCsv(m_visualMat, fileName, m_head, ri->comboCodec->currentText());
+			QMessageBox::information(this, "导出成功", "导出到 " + fileName);
+		}
+	}
+}
+
+void MainWindow::pickedEvent(vtkIdType id)
+{
+	if (id < 0 || id >= m_visualMat.rows())
 	{
 		ui->labelPickedX->setText("-");
 		ui->labelPickedY->setText("-");
@@ -208,35 +221,15 @@ void MainWindow::pick(vtkIdType id)
 		return;
 	}
 
-	float x = m_block(id, ri->comboX->currentIndex());
-	float y = m_block(id, ri->comboY->currentIndex());
-	float z = m_block(id, ri->comboZ->currentIndex());
-	float f = m_block(id, ri->comboF->currentIndex());
+	float x = m_visualMat(id, ri->comboX->currentIndex());
+	float y = m_visualMat(id, ri->comboY->currentIndex());
+	float z = m_visualMat(id, ri->comboZ->currentIndex());
+	float f = m_visualMat(id, ri->comboF->currentIndex());
 	ui->labelPickedX->setText(QString::number(x));
 	ui->labelPickedY->setText(QString::number(y));
 	ui->labelPickedZ->setText(QString::number(z));
 	ui->labelPickedF->setText(QString::number(f));
 	ui->labelPointId->setText(QString::number(id));
-}
-
-void MainWindow::pickMax()
-{
-	if (hasData())
-	{
-		int maxIndex;
-		m_mat.col(ri->comboF->currentIndex()).maxCoeff(&maxIndex);
-		pick(maxIndex);
-	}
-}
-
-void MainWindow::pickMin()
-{
-	if (hasData())
-	{
-		int minIndex;
-		m_mat.col(ri->comboF->currentIndex()).minCoeff(&minIndex);
-		pick(minIndex);
-	}
 }
 
 void MainWindow::startLiveView()
@@ -278,7 +271,7 @@ void MainWindow::dropEvent(QDropEvent* ev)
 	if (ev->mimeData()->hasUrls())
 	{
 		for (auto& url : ev->mimeData()->urls())
-			read(url.toLocalFile());
+			readFile(url.toLocalFile());
 		ev->acceptProposedAction();
 	}
 }

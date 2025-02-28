@@ -4,7 +4,6 @@
 #include "qtoolbutton.h"
 #include "qaction.h"
 #include "qspinbox.h"
-#include "qlabel.h"
 #include "qcombobox.h"
 #include "qcheckbox.h"
 
@@ -28,11 +27,15 @@ public:
 	QAction* actionBackgroundColorUp   = new QAction;
 	QAction* actionBackgroundColorDown = new QAction;
 
+	QToolButton* buttonBackgroundImage = new QToolButton;
+
 	QSpinBox* spinPointSize		  = new QSpinBox;
 	QSpinBox* spinPickedPointSize = new QSpinBox;
 
 	QSpinBox* spinFirstVisualPointNo = new QSpinBox;
 	QSpinBox* spinLastVisualPointNo  = new QSpinBox;
+
+	QToolButton* buttonExportVisualPoints = new QToolButton;
 
 	QComboBox* comboX = new QComboBox;
 	QComboBox* comboY = new QComboBox;
@@ -43,10 +46,10 @@ public:
 	QSpinBox* spinLiveDuration = new QSpinBox;
 
 	QToolButton* buttonPickPoint = new QToolButton;
-	QAction* actionPickFirstPoint = new QAction(tr("第一个点")); QAction* actionPickLastPoint = new QAction("最后一个点");
-	QAction* actionPickMaxXPoint = new QAction("X最大点"); QAction* actionPickMinXPoint = new QAction("X最小点");
-	QAction* actionPickMaxYPoint = new QAction("Y最大点"); QAction* actionPickMinYPoint = new QAction("Y最小点");
-	QAction* actionPickMaxZPoint = new QAction("Z最大点"); QAction* actionPickMinZPoint = new QAction("Z最小点");
+	QAction* actionPickFirstPoint = new QAction("第一个点");   QAction* actionPickLastPoint = new QAction("最后一个点");
+	QAction* actionPickMaxXPoint = new QAction("X最大点");     QAction* actionPickMinXPoint = new QAction("X最小点");
+	QAction* actionPickMaxYPoint = new QAction("Y最大点");	  QAction* actionPickMinYPoint = new QAction("Y最小点");
+	QAction* actionPickMaxZPoint = new QAction("Z最大点");     QAction* actionPickMinZPoint = new QAction("Z最小点");
 	QAction* actionPickMaxFPoint = new QAction("特征值最大点"); QAction* actionPickMinFPoint = new QAction("特征值最小点");
 
 	QToolButton* buttonStartLiveView = new QToolButton;
@@ -55,9 +58,8 @@ public:
 	QCheckBox* checkScalarbarVisibility = new QCheckBox;
 	QCheckBox* checkAxisVisibility		= new QCheckBox;
 
-	QToolButton* buttonBackgroundImage = new QToolButton;
-
 	QComboBox* comboCodec = new QComboBox;
 
+	/// @brief 重置显示的点的编号
 	void resetSpinVisualPointNo();
 };
