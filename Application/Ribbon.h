@@ -6,6 +6,10 @@
 #include "qspinbox.h"
 #include "qcombobox.h"
 #include "qcheckbox.h"
+#include "qradiobutton.h"
+#include "qbuttongroup.h"
+
+#include "RibbonTab.h"
 
 #pragma execution_character_set("utf-8")
 
@@ -16,12 +20,20 @@ class Ribbon : public QWidget
 public:
 	Ribbon(QWidget* parent = nullptr);
 
-	QToolButton* buttonOpenFile				 = new QToolButton;
-	QAction*     actionOpenCsv_AndSkipFirstRow	 = new QAction;
-	QAction*     actionOpenCsv_NotSkipFirstRow   = new QAction;
+	RibbonTab* tabFile; 
+	RibbonTab* tabView; 
+	RibbonTab* tabSet; 
+	RibbonTab* tabLiveView;
+
+	QToolButton* buttonOpenFile	= new QToolButton;
+
+	QRadioButton* radioChart = new QRadioButton("¶þÎ¬Í¼Ïñ");
+	QRadioButton* radioCloud = new QRadioButton("ÈýÎ¬µãÔÆ");
 
 	QToolButton* buttonClearView   = new QToolButton;
 	QToolButton* buttonRefreshView = new QToolButton;
+
+	QToolButton* buttonAddSeries = new QToolButton;
 
 	QToolButton* buttonBackgroundColor = new QToolButton;
 	QAction* actionBackgroundColorUp   = new QAction;

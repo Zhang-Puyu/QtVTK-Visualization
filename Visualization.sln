@@ -10,8 +10,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Application", "Application\Application.vcxproj", "{F59733A9-898A-41BC-B0F7-AB1067BD8883}"
 	ProjectSection(ProjectDependencies) = postProject
 		{12E322F8-9752-4FA7-AD3B-C96367F9D64F} = {12E322F8-9752-4FA7-AD3B-C96367F9D64F}
+		{456107F2-9836-4ACB-986D-DB014E2530FF} = {456107F2-9836-4ACB-986D-DB014E2530FF}
 		{92A76AD4-FF90-4481-8C94-CEADC73A528E} = {92A76AD4-FF90-4481-8C94-CEADC73A528E}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QtNCToolBox", "..\NCToolBox\QtNCToolBox\QtNCToolBox.vcxproj", "{456107F2-9836-4ACB-986D-DB014E2530FF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,6 +34,10 @@ Global
 		{F59733A9-898A-41BC-B0F7-AB1067BD8883}.Debug|x64.Build.0 = Debug|x64
 		{F59733A9-898A-41BC-B0F7-AB1067BD8883}.Release|x64.ActiveCfg = Release|x64
 		{F59733A9-898A-41BC-B0F7-AB1067BD8883}.Release|x64.Build.0 = Release|x64
+		{456107F2-9836-4ACB-986D-DB014E2530FF}.Debug|x64.ActiveCfg = Debug|x64
+		{456107F2-9836-4ACB-986D-DB014E2530FF}.Debug|x64.Build.0 = Debug|x64
+		{456107F2-9836-4ACB-986D-DB014E2530FF}.Release|x64.ActiveCfg = Release|x64
+		{456107F2-9836-4ACB-986D-DB014E2530FF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

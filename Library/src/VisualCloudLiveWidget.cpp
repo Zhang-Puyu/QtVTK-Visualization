@@ -21,8 +21,10 @@
 #include "vtkPolyLine.h"
 #include "vtkLineSource.h"
 
-#include "VisualLiveWidget.h"
-#include "Reader.h"
+#include "VisualCloudLiveWidget.h"
+
+#include "EigenExtention.hpp"
+#include "StringExtension.hpp"
 
 #include "QtConcurrent/qtconcurrentrun.h"
 
@@ -30,19 +32,21 @@
 
 using namespace Eigen;
 
-VisualLiveWidget::VisualLiveWidget(QWidget* parent)
-	: VisualWidget(parent)
+VisualCloudLiveWidget::VisualCloudLiveWidget(QWidget* parent)
+	: VisualCloudWidget(parent),
+	  AbstractLiveWidget()
 {
-	connect(this, &VisualLiveWidget::renderSignal, this, &VisualLiveWidget::render,
-		Qt::BlockingQueuedConnection);
+	connect(this, &VisualCloudLiveWidget::renderSignal, 
+			this, &VisualCloudLiveWidget::render,
+			Qt::BlockingQueuedConnection);
 }
 
-VisualLiveWidget::~VisualLiveWidget()
+VisualCloudLiveWidget::~VisualCloudLiveWidget()
 {
 	stopLiveView();
 }
 
-void VisualLiveWidget::startLiveView()
+void VisualCloudLiveWidget::startLiveView()
 {
 	pick(NO_POINT_PICKED);
 
@@ -74,30 +78,31 @@ void VisualLiveWidget::startLiveView()
 
 	m_liveContinueFlag = true;
 
-	QtConcurrent::run([&]() {
-
-		emit liveViewStarted();
-
-		for (int i = 0; m_liveContinueFlag && i < m_liveX.size(); ++i)
+	QtConcurrent::run([&]()
 		{
-			m_livePolyVertex->GetPointIds()->InsertNextId(
-				m_livePoints->InsertNextPoint(m_liveX(i), m_liveY(i), m_liveZ(i)));
-			m_liveScalars->InsertNextTuple1(m_liveF(i));
+			emit liveViewStarted();
 
-			m_liveGrid->Reset();
-			m_liveGrid->InsertNextCell(m_livePolyVertex->GetCellType(), m_livePolyVertex->GetPointIds());
+			for (int i = 0; m_liveContinueFlag && i < m_liveX.size(); ++i)
+			{
+				m_livePolyVertex->GetPointIds()->InsertNextId(
+					m_livePoints->InsertNextPoint(m_liveX(i), m_liveY(i), m_liveZ(i)));
+				m_liveScalars->InsertNextTuple1(m_liveF(i));
 
-			m_liveGrid->UpdateCellGhostArrayCache();
-			m_liveGrid->Modified();
-			m_liveMapper->Update();
-			m_liveMapper->Modified();
+				m_liveGrid->Reset();
+				m_liveGrid->InsertNextCell(m_livePolyVertex->GetCellType(), m_livePolyVertex->GetPointIds());
 
-			emit renderSignal();
+				m_liveGrid->UpdateCellGhostArrayCache();
+				m_liveGrid->Modified();
+				m_liveMapper->Update();
+				m_liveMapper->Modified();
 
-			QThread::msleep(m_liveInterval);
-		}
+				emit renderSignal();
 
-		emit liveViewStopped();
+				QThread::msleep(m_liveInterval);
+			}
 
-		m_points = m_livePoints; });
+			emit liveViewStopped();
+
+			m_points = m_livePoints;
+		});
 }

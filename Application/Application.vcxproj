@@ -52,6 +52,7 @@
     <Import Project="..\..\..\Library\VTK-8.2.0_d.props" />
     <Import Project="..\QtRibbon\QtRibbon.props" />
     <Import Project="..\Library\Library.props" />
+    <Import Project="..\..\NCToolBox\QtNCToolBox\QtNCToolBox.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -60,6 +61,7 @@
     <Import Project="..\..\..\Library\eigen-3.4.0.props" />
     <Import Project="..\QtRibbon\QtRibbon.props" />
     <Import Project="..\Library\Library.props" />
+    <Import Project="..\..\NCToolBox\QtNCToolBox\QtNCToolBox.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
@@ -112,7 +114,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DataSingleton.cpp" />
     <ClCompile Include="Ribbon.cpp" />
     <QtRcc Include="Resource.qrc" />
     <QtUic Include="MainWindow.ui" />
@@ -124,9 +125,6 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Ribbon.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="DataSingleton.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -5,6 +5,7 @@
 
 #include "qmenu.h"
 #include "qlabel.h"
+#include "qdebug.h"
 
 #pragma execution_character_set("utf-8")
 
@@ -17,25 +18,20 @@ Ribbon::Ribbon(QWidget* parent)
 	layout->setContentsMargins(0, 0, 0, 0);
 	setLayout(layout);
 
-	/***************************************************************/
+	setMinimumHeight(115);
+	setMaximumHeight(115);
 
-	ribbonTabWidget->addTab(QIcon(":/icons/icons/file.svg"), "显示");
-	ribbonTabWidget->addTab(QIcon(":/icons/icons/set.svg"),  "设置");
-	ribbonTabWidget->addTab(QIcon(":/icons/icons/info.svg"), "动态显示");
+	/*文件**************************************************************/
+
+	tabFile = ribbonTabWidget->addTab(QIcon(":/icons/icons/file.svg"), "文件");
+	tabView = ribbonTabWidget->addTab(QIcon(":/icons/icons/measure.svg"), "显示");
+	tabSet  = ribbonTabWidget->addTab(QIcon(":/icons/icons/set.svg"),  "设置");
+	tabLiveView = ribbonTabWidget->addTab(QIcon(":/icons/icons/info.svg"), "动态显示");
 
 	buttonOpenFile->setText(tr("打开"));
 	buttonOpenFile->setIcon(QIcon(":/icons/icons/打开.svg"));
 
-	QMenu* menuOpen = new QMenu("打开");
-	actionOpenCsv_AndSkipFirstRow->setText(tr("打开csv，第一行为表头"));
-	actionOpenCsv_NotSkipFirstRow->setText(tr("打开csv，第一行为数据"));
-	menuOpen->addAction(actionOpenCsv_AndSkipFirstRow);
-	menuOpen->addAction(actionOpenCsv_NotSkipFirstRow);
-
-	buttonOpenFile->setPopupMode(QToolButton::MenuButtonPopup);
-	buttonOpenFile->setMenu(menuOpen);
-
-	ribbonTabWidget->addButton("显示", "文件", buttonOpenFile);
+	ribbonTabWidget->addButton("文件", "打开", buttonOpenFile);
 
 	QWidget* widget = new QWidget;
 	QGridLayout* gridLayout = new QGridLayout(widget);
@@ -52,7 +48,28 @@ Ribbon::Ribbon(QWidget* parent)
 	comboCodec->addItem("UTF-32BE");
 	comboCodec->addItem("UTF-32LE");
 
-	ribbonTabWidget->addWidget("显示", "文件", widget);
+	ribbonTabWidget->addWidget("文件", "打开", widget);
+
+	buttonClearView->setText(tr("清空"));
+	buttonClearView->setIcon(QIcon(":/icons/icons/清空.svg"));
+	ribbonTabWidget->addButton("文件", "", buttonClearView);
+
+	/*显示**************************************************************/
+
+	widget = new QWidget;
+	gridLayout = new QGridLayout(widget);
+	gridLayout->setContentsMargins(3, 7, 3, 9);
+	QButtonGroup* radioGroup = new QButtonGroup();
+	radioGroup->addButton(radioChart, 0);
+	radioGroup->addButton(radioCloud, 1);
+	radioGroup->setExclusive(true);
+
+	gridLayout->addWidget(radioChart, 0, 0);
+	gridLayout->addWidget(radioCloud, 1, 0);
+
+	radioCloud->setChecked(true);
+
+	ribbonTabWidget->addWidget("显示", "显示类型", widget);
 
 	widget = new QWidget;
 	gridLayout = new QGridLayout(widget);
@@ -61,6 +78,12 @@ Ribbon::Ribbon(QWidget* parent)
 	gridLayout->addWidget(new QLabel(tr("Y")), 1, 0); gridLayout->addWidget(comboY, 1, 1);
 	gridLayout->addWidget(new QLabel(tr(" Z")), 0, 3); gridLayout->addWidget(comboZ, 0, 4);
 	gridLayout->addWidget(new QLabel(tr(" F")), 1, 3); gridLayout->addWidget(comboF, 1, 4);
+
+	// 仅显示三维点云时
+	connect(radioCloud, &QRadioButton::toggled, [=](bool checked) {
+		comboZ->setEnabled(checked);
+		comboF->setEnabled(checked);
+		});
 
 	ribbonTabWidget->addWidget("显示", "显示对象", widget);
 
@@ -93,11 +116,17 @@ Ribbon::Ribbon(QWidget* parent)
 	buttonRefreshView->setIcon(QIcon(":/icons/icons/刷新.svg"));
 	ribbonTabWidget->addButton("显示", "显示", buttonRefreshView);
 
-	buttonClearView->setText(tr("清空"));
-	buttonClearView->setIcon(QIcon(":/icons/icons/清空.svg"));
-	ribbonTabWidget->addButton("显示", "显示", buttonClearView);
+	buttonAddSeries->setText(tr("添加"));
+	buttonAddSeries->setIcon(QIcon(":/icons/icons/添加.svg"));
+	ribbonTabWidget->addButton("显示", "显示", buttonAddSeries);
 
-	/***************************************************************/
+	// 仅显示二维图像时
+	connect(radioChart, &QRadioButton::toggled, [=](bool checked) {
+		buttonAddSeries->setEnabled(checked);
+		});
+	buttonAddSeries->setEnabled(false);
+
+	/*设置**************************************************************/
 
 	buttonBackgroundColor->setText(tr("颜色"));
 	buttonBackgroundColor->setIcon(QIcon(":/icons/icons/颜色.svg"));
@@ -112,6 +141,11 @@ Ribbon::Ribbon(QWidget* parent)
 	buttonBackgroundColor->setMenu(menuColor);
 
 	ribbonTabWidget->addButton("设置", "背景", buttonBackgroundColor);
+
+	// 仅显示三维点云时
+	connect(radioCloud, &QRadioButton::toggled, [=](bool checked) {
+		menuColor->setEnabled(checked);
+		});
 
 	buttonBackgroundImage->setText(tr("图片"));
 	buttonBackgroundImage->setIcon(QIcon(":/icons/icons/图片.svg"));
@@ -129,7 +163,13 @@ Ribbon::Ribbon(QWidget* parent)
 	gridLayout->addWidget(checkAxisVisibility, 0, 0);
 	gridLayout->addWidget(checkScalarbarVisibility, 1, 0);
 
-	ribbonTabWidget->addWidget("设置", "显示", widget);
+	// 仅显示三维点云时
+	connect(radioCloud, &QRadioButton::toggled, [=](bool checked) {
+		checkAxisVisibility->setEnabled(checked);
+		checkScalarbarVisibility->setEnabled(checked);
+		});
+
+	ribbonTabWidget->addWidget("设置", "辅助", widget);
 
 	widget		= new QWidget;
 	gridLayout  = new QGridLayout(widget);
@@ -145,6 +185,11 @@ Ribbon::Ribbon(QWidget* parent)
 	spinPickedPointSize->setValue(5);
 
 	ribbonTabWidget->addWidget("设置", "点尺寸", widget);
+
+	// 仅显示三维点云时
+	connect(radioCloud, &QRadioButton::toggled, [=](bool checked) {
+		spinPickedPointSize->setEnabled(checked);
+		});
 
 	buttonPickPoint->setText(tr("拾取"));
 	buttonPickPoint->setIcon(QIcon(":/icons/icons/跳转.svg"));
@@ -162,7 +207,12 @@ Ribbon::Ribbon(QWidget* parent)
 
 	ribbonTabWidget->addButton("设置", "跳转", buttonPickPoint);
 
-	/***************************************************************/
+	// 仅显示三维点云时
+	connect(radioCloud, &QRadioButton::toggled, [=](bool checked) {
+		menuPick->setEnabled(checked);
+		});
+
+	/*动态显示**************************************************************/
 
 	buttonStartLiveView->setText(tr("开始"));
 	buttonStartLiveView->setIcon(QIcon(":/icons/icons/开始.svg"));
@@ -188,7 +238,6 @@ Ribbon::Ribbon(QWidget* parent)
 	spinLiveDuration->setRange(1, 10 * 60);
 	spinLiveDuration->setValue(10);
 	spinLiveDuration->setSuffix("s");
-	spinLiveDuration->setEnabled(false);
 
 	ribbonTabWidget->addWidget("动态显示", "设置", widget);
 }

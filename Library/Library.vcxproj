@@ -14,19 +14,26 @@
     <QtMoc Include="include\InteractorStyle.h" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="include\VisualLiveWidget.h" />
-    <QtMoc Include="include\Reader.h" />
-    <QtMoc Include="include\VisualWidget.h" />
+    <QtMoc Include="include\VisualCloudLiveWidget.h" />
+    <QtMoc Include="include\VisualCloudWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\InteractorStyle.cpp" />
-    <ClCompile Include="src\VisualLiveWidget.cpp" />
-    <ClCompile Include="src\ReadCnc.cpp" />
-    <ClCompile Include="src\ReadCsv.cpp" />
-    <ClCompile Include="src\VisualWidget.cpp" />
+    <ClCompile Include="src\QFlexibleChartView.cpp" />
+    <ClCompile Include="src\VisualChartLiveWidget.cpp" />
+    <ClCompile Include="src\VisualChartWidget.cpp" />
+    <ClCompile Include="src\VisualCloudLiveWidget.cpp" />
+    <ClCompile Include="src\VisualCloudWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\MatrixExtention.hpp" />
+    <QtMoc Include="include\QFlexibleChartView.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="include\VisualChartWidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\AbstractLiveWidget.h" />
+    <QtMoc Include="include\VisualChartLiveWidget.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{92A76AD4-FF90-4481-8C94-CEADC73A528E}</ProjectGuid>
@@ -50,7 +57,7 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>5.15.2_msvc2019_64</QtInstall>
-    <QtModules>core;gui;widgets</QtModules>
+    <QtModules>core;gui;widgets;charts</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
@@ -69,6 +76,7 @@
     <Import Project="..\..\..\Library\eigen-3.4.0.props" />
     <Import Project="..\..\..\Library\VTK-8.2.0_d.props" />
     <Import Project="Library.props" />
+    <Import Project="..\..\NCToolBox\QtNCToolBox\QtNCToolBox.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -76,6 +84,7 @@
     <Import Project="..\..\..\Library\eigen-3.4.0.props" />
     <Import Project="..\..\..\Library\VTK-8.2.0.props" />
     <Import Project="Library.props" />
+    <Import Project="..\..\NCToolBox\QtNCToolBox\QtNCToolBox.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">

@@ -57,13 +57,13 @@ struct ValueRangeIndexes
     unsigned int x = 0, y = 0, z = 0, f = 0;
 };
 
-class VisualWidget : public QVTKOpenGLWidget
+class VisualCloudWidget : public QVTKOpenGLWidget
 {
     Q_OBJECT
 
 public:
-    VisualWidget(QWidget* parent = nullptr);
-    ~VisualWidget();
+    VisualCloudWidget(QWidget* parent = nullptr);
+    ~VisualCloudWidget();
 
     /// @brief 显示单色点云
     void visualizePoints(const Eigen::VectorXf& X, const Eigen::VectorXf& Y, const Eigen::VectorXf& Z,

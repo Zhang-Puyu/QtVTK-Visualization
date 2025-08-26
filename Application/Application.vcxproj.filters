@@ -45,15 +45,9 @@
     <ClCompile Include="Ribbon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataSingleton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Ribbon.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="DataSingleton.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

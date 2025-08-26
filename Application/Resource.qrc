@@ -13,5 +13,7 @@
         <file>icons/图片.svg</file>
         <file>icons/跳转.svg</file>
         <file>icons/导出.svg</file>
+        <file>icons/measure.svg</file>
+        <file>icons/添加.svg</file>
     </qresource>
 </RCC>
