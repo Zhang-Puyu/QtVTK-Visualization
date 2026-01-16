@@ -43,6 +43,16 @@ VisualChartWidget::VisualChartWidget(QWidget* parent)
     Q_ASSERT(m_axisY);
     m_axisY->setLabelFormat("%.1f  ");
 
+	// 拾取点
+	m_chart->addSeries(m_pickedPointSeries);
+	m_pickedPointSeries->setMarkerSize(m_markerSize + 3);
+	m_pickedPointSeries->setColor(Qt::red);
+	m_pickedPointSeries->setUseOpenGL(true);
+	m_pickedPointSeries->attachAxis(m_axisX);
+	m_pickedPointSeries->attachAxis(m_axisY);
+
+	connect(this, &VisualChartWidget::pointPicked, this, &VisualChartWidget::pointPickedHandler);
+
     this->setChart(m_chart);
 }
 
@@ -52,7 +62,12 @@ VisualChartWidget::~VisualChartWidget()
 void VisualChartWidget::clear()
 {
 	m_chart->removeAllSeries();
+
+	m_pickedPointSeries->clear();
+	m_chart->addSeries(m_pickedPointSeries);
+
 	m_chart->setTitle("散点图");
+
 	m_seriesMap.clear();
 
 	m_colorIndex = 0;
@@ -60,34 +75,42 @@ void VisualChartWidget::clear()
     this->update();
 }
 
+void VisualChartWidget::pointPickedHandler(const QPointF& point)
+{
+	m_pickedPointSeries->clear();
+	m_pickedPointSeries->append(point);
+	
+	this->update();
+}
+
 void VisualChartWidget::visualizePoints(const Eigen::VectorXf& X, const Eigen::VectorXf& Y,
     const QString& seriesName, const QColor& color)
 {
-	QScatterSeries* m_liveSeries = new QtCharts::QScatterSeries();
-    m_chart->addSeries(m_liveSeries);
-    m_seriesMap.insert(seriesName, m_liveSeries);
+	QScatterSeries* series = new QtCharts::QScatterSeries();
+    m_chart->addSeries(series);
+    m_seriesMap.insert(seriesName, series);
 
-	m_liveSeries->setName(seriesName.isEmpty() ? QString("series") + QString::number(m_seriesMap.size()) : seriesName);
-    m_liveSeries->setMarkerSize(m_markerSize);
+	series->setName(seriesName.isEmpty() ? QString("series") + QString::number(m_seriesMap.size()) : seriesName);
+    series->setMarkerSize(m_markerSize);
 
     if (color == Qt::white)
-        m_liveSeries->setColor(nextColor());
+        series->setColor(nextColor());
     else
-		m_liveSeries->setColor(color);
+		series->setColor(color);
 
-	m_liveSeries->setPointLabelsVisible(m_pointLabelVisible);
-    m_liveSeries->setPointLabelsFormat("(@xPoint, @yPoint)");
-    m_liveSeries->setPointLabelsClipping(true);
-    m_liveSeries->setUseOpenGL(true);
-	m_liveSeries->attachAxis(m_axisX);
-	m_liveSeries->attachAxis(m_axisY);
+	series->setPointLabelsVisible(m_pointLabelVisible);
+    series->setPointLabelsFormat("(@xPoint, @yPoint)");
+    series->setPointLabelsClipping(true);
+    series->setUseOpenGL(true);
+	series->attachAxis(m_axisX);
+	series->attachAxis(m_axisY);
 
 	int size = std::min(X.size(), Y.size());
     for (int i = 0; i < size; ++i)
-        m_liveSeries->append(X(i), Y(i));
+        series->append(X(i), Y(i));
 
 	// 连接点击信号
-	connect(m_liveSeries, &QScatterSeries::clicked, this, &VisualChartWidget::picked);
+	connect(series, &QScatterSeries::clicked, this, &VisualChartWidget::pointPicked);
 
 	// 设置坐标轴范围
 	double minX, maxX, minY, maxY;

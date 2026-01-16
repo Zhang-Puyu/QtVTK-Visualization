@@ -186,11 +186,6 @@ Ribbon::Ribbon(QWidget* parent)
 
 	ribbonTabWidget->addWidget("设置", "点尺寸", widget);
 
-	// 仅显示三维点云时
-	connect(radioCloud, &QRadioButton::toggled, [=](bool checked) {
-		spinPickedPointSize->setEnabled(checked);
-		});
-
 	buttonPickPoint->setText(tr("拾取"));
 	buttonPickPoint->setIcon(QIcon(":/icons/icons/跳转.svg"));
 	buttonPickPoint->setToolTip(tr("按左右方向键可跳转选中到前后点，按上下方向键可跳转选中到首尾点"));

@@ -62,16 +62,20 @@ MainWindow::MainWindow(QWidget* parent)
 	// 设置点尺寸
 	connect(ri->spinPointSize, QOverload<int>::of(&QSpinBox::valueChanged), ui->visualCloudWidget, &VisualCloudWidget::setPointsSize);
 	ui->visualCloudWidget->setPointsSize(ri->spinPointSize->value());
-	connect(ri->spinPointSize, QOverload<int>::of(&QSpinBox::valueChanged), ui->visualChartWidget, &VisualChartWidget::setMarkerSize);
-	ui->visualChartWidget->setMarkerSize(ri->spinPointSize->value());
+	connect(ri->spinPointSize, QOverload<int>::of(&QSpinBox::valueChanged), ui->visualChartWidget, &VisualChartWidget::setPointsSize);
+	ui->visualChartWidget->setPointsSize(ri->spinPointSize->value());
 
+	// 设置拾取点尺寸
 	connect(ri->spinPickedPointSize, QOverload<int>::of(&QSpinBox::valueChanged), ui->visualCloudWidget, &VisualCloudWidget::setPickedPointSize);
+	connect(ri->spinPickedPointSize, QOverload<int>::of(&QSpinBox::valueChanged), ui->visualChartWidget, &VisualChartWidget::setPickedPointSize);
 	ui->visualCloudWidget->setPickedPointSize(ri->spinPickedPointSize->value());
+	ui->visualChartWidget->setPickedPointSize(ri->spinPickedPointSize->value());
 
 
 	// 刷新视图
 	connect(ri->buttonRefreshView, &QToolButton::clicked, [=]() {
 		if (isVisualChart()) ui->visualChartWidget->clear();
+        if (isVisualCloud()) ui->visualCloudWidget->clear();
 		refreshView();
 		});
 	connect(ri->buttonAddSeries, &QToolButton::clicked, this, &MainWindow::refreshView);
@@ -79,14 +83,14 @@ MainWindow::MainWindow(QWidget* parent)
 	// 版权声明
 	QLabel* copyright = new QLabel("Copyright (C) 2024 西北工业大学-张璞玉. a11 rights reserved.");
 	ui->statusBar->addPermanentWidget(copyright);
-	ui->statusBar->showMessage(tr("支持的文件类型：stl csv nc. cls"));
+	ui->statusBar->showMessage(tr("支持的文件类型：stl csv nc cls mpf"));
 
 	// 导出显示的点
 	connect(ri->buttonExportVisualPoints, &QToolButton::clicked, this, &MainWindow::exportVisualPoints);
 
 	// 显示拾取点
-	connect(ui->visualCloudWidget, &VisualCloudWidget::picked, this, &MainWindow::cloudPointPickedHandler);
-	connect(ui->visualChartWidget, &VisualChartWidget::picked, this, &MainWindow::chartPointPickedHandler);
+	connect(ui->visualCloudWidget, &VisualCloudWidget::pointPicked, this, &MainWindow::cloudPointPickedHandler);
+	connect(ui->visualChartWidget, &VisualChartWidget::pointPicked, this, &MainWindow::chartPointPickedHandler);
 	// 拾取指定的点
 	connect(ri->actionPickFirstPoint, &QAction::triggered, ui->visualCloudWidget, &VisualCloudLiveWidget::pickFirst);
 	connect(ri->actionPickLastPoint, &QAction::triggered, ui->visualCloudWidget, &VisualCloudLiveWidget::pickLast);

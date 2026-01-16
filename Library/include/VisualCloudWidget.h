@@ -146,7 +146,7 @@ protected:
 
 signals:
     /// @brief  ∞»°µ„–≈∫≈
-    void picked(vtkIdType pointId);
+    void pointPicked(vtkIdType pointId);
 };
  
 

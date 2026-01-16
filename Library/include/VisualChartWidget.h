@@ -34,8 +34,8 @@ public:
 	/// @brief 设置坐标值可见
 	void setPointLabelVisible(bool visible) {
 		m_pointLabelVisible = visible;
-		for (QtCharts::QScatterSeries* m_liveSeries : m_seriesMap)
-			m_liveSeries->setPointLabelsVisible(visible);
+		for (QtCharts::QScatterSeries* series : m_seriesMap)
+			series->setPointLabelsVisible(visible);
 		this->update();
 	}
 
@@ -53,10 +53,16 @@ public:
 	}
 
 	/// @brief 设置离散点大小
-	void setMarkerSize(int size) {
+	void setPointsSize(int size) {
 		m_markerSize = size;
-		for (QtCharts::QScatterSeries* m_liveSeries : m_seriesMap)
-			m_liveSeries->setMarkerSize(size);
+		for (QtCharts::QScatterSeries* series : m_seriesMap)
+			series->setMarkerSize(size);
+		this->update();
+	}
+
+	/// @brief 设置拾取点大小
+	void setPickedPointSize(int size) {
+		m_pickedPointSeries->setMarkerSize(size);
 		this->update();
 	}
 
@@ -66,11 +72,17 @@ public:
 protected:
     QtCharts::QChart* m_chart = new QtCharts::QChart;
 
+	/// @brief 横坐标轴
 	QtCharts::QValueAxis* m_axisX = new QtCharts::QValueAxis;
+    /// @brief 纵坐标轴
 	QtCharts::QValueAxis* m_axisY = new QtCharts::QValueAxis;
 
 	QMap<QString, QtCharts::QScatterSeries*> m_seriesMap;
 
+	QtCharts::QScatterSeries* m_pickedPointSeries = new QtCharts::QScatterSeries;
+	QPointF m_lastPickedPoint;
+
+	/// @brief 点尺寸
 	int m_markerSize = 10;
 	bool m_pointLabelVisible = true;
 
@@ -78,16 +90,21 @@ protected:
 	{
 		if (m_colorIndex >= m_colorList.size()) 
 			m_colorIndex = 0;
-		return m_colorList[m_colorIndex++];
+		return m_colorList[++m_colorIndex];
 	}
 
+	/// @brief 颜色表
 	const QList<QColor> m_colorList = {
-		Qt::red, Qt::green, Qt::blue, Qt::yellow, Qt::cyan,
+		Qt::blue, Qt::green, Qt::yellow, Qt::cyan,
 		Qt::magenta, Qt::darkRed, Qt::darkGreen, Qt::darkBlue,
 		Qt::darkYellow, Qt::darkCyan, Qt::darkMagenta };
+	/// @brief 当前颜色索引
 	int m_colorIndex = 0;
 
+	void pointPickedHandler(const QPointF& point);
+
 signals:
-	void picked(const QPointF& point);
+	/// @brief 拾取点信号
+	void pointPicked(const QPointF& point);
 };
 

@@ -11,11 +11,13 @@ class QFlexibleChartView : public QtCharts::QChartView
 public:
 	QFlexibleChartView(QWidget* parent = nullptr);
 	~QFlexibleChartView();
+
 protected:
 	virtual void mouseMoveEvent(QMouseEvent* pEvent) override;
 	virtual void mousePressEvent(QMouseEvent* pEvent) override;
 	virtual void mouseReleaseEvent(QMouseEvent* pEvent) override;
 	virtual void wheelEvent(QWheelEvent* pEvent) override;
+
 private:
 	bool m_bMiddleButtonPressed =false;
 	bool m_bHorizontalZoom = false;

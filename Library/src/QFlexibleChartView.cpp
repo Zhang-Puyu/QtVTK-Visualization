@@ -34,13 +34,11 @@ void QFlexibleChartView::mousePressEvent(QMouseEvent* pEvent)
 	{
 		m_bVerticalZoom = true;
 		m_oPrePos = pEvent->pos();
-		this->setCursor(Qt::SplitVCursor);
 	}
 	if (pEvent->button() == Qt::RightButton)
 	{
 		m_bHorizontalZoom = true;
 		m_oPrePos = pEvent->pos();
-		this->setCursor(Qt::SplitHCursor);
 	}
 	__super::mousePressEvent(pEvent);
 }
@@ -48,20 +46,14 @@ void QFlexibleChartView::mousePressEvent(QMouseEvent* pEvent)
 void QFlexibleChartView::mouseReleaseEvent(QMouseEvent* pEvent)
 {
 	if (pEvent->button() == Qt::MiddleButton)
-	{
 		m_bMiddleButtonPressed = false;
-		this->setCursor(Qt::ArrowCursor);
-	}
 	if (pEvent->button() == Qt::LeftButton)
-	{
 		m_bVerticalZoom = false;
-		this->setCursor(Qt::ArrowCursor);
-	}
 	if (pEvent->button() == Qt::RightButton)
-	{
 		m_bHorizontalZoom = false;
-		this->setCursor(Qt::ArrowCursor);
-	}
+
+	this->setCursor(Qt::ArrowCursor);
+
 	__super::mouseReleaseEvent(pEvent);
 }
 
@@ -72,11 +64,19 @@ void QFlexibleChartView::wheelEvent(QWheelEvent* pEvent)
 	QRectF oPlotAreaRect = this->chart()->plotArea();
 	QPointF oCenterPoint = oPlotAreaRect.center();
 	// 2. 水平调整
-	if(m_bHorizontalZoom)
+	if (m_bHorizontalZoom)
+	{	
+		this->setCursor(Qt::SplitHCursor);
 		oPlotAreaRect.setWidth(oPlotAreaRect.width() * rVal);
+	}
+		
 	// 3. 竖直调整
-	if(m_bVerticalZoom)
+	if (m_bVerticalZoom)
+	{
+		this->setCursor(Qt::SplitVCursor);
 		oPlotAreaRect.setHeight(oPlotAreaRect.height() * rVal);
+	}
+		
 	// 同时调整
 	if ((!m_bHorizontalZoom) && (!m_bVerticalZoom))
 	{

@@ -361,14 +361,14 @@ void VisualCloudWidget::pick(const vtkIdType& id)
 			m_pickedPointActor->SetVisibility(true);
 			this->GetRenderWindow()->Render();
 
-			emit picked(id);
+			emit pointPicked(id);
 		}
 		else // id == -1
 		{
 			m_pickedPointActor->SetVisibility(false);
 			this->GetRenderWindow()->Render();
 
-			emit picked(NO_POINT_PICKED);
+			emit pointPicked(NO_POINT_PICKED);
 		}
 	}
 }
