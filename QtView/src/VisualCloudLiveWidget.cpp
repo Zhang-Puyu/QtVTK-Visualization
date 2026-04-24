@@ -23,14 +23,9 @@
 
 #include "VisualCloudLiveWidget.h"
 
-#include "EigenExtention.hpp"
-#include "StringExtension.hpp"
-
 #include "QtConcurrent/qtconcurrentrun.h"
 
 #pragma execution_character_set("utf-8")
-
-using namespace Eigen;
 
 VisualCloudLiveWidget::VisualCloudLiveWidget(QWidget* parent)
 	: VisualCloudWidget(parent),
@@ -105,4 +100,11 @@ void VisualCloudLiveWidget::startLiveView()
 
 			m_points = m_livePoints;
 		});
+}
+
+void VisualCloudLiveWidget::setData(const Eigen::VectorXf& X, const Eigen::VectorXf& Y, const Eigen::VectorXf& Z,
+	const Eigen::VectorXf& F, const QString& fName)
+{
+	m_liveX = X; m_liveY = Y; m_liveZ = Z; m_liveF = F;
+	m_scalarbarActor->SetTitle(hasChinese(fName) ? "Scalar" : fName.toLocal8Bit());
 }

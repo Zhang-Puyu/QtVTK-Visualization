@@ -3,9 +3,6 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_MainWindow.h"
 
-#include "ReadAPT.h"
-#include "ReadGCode.h"
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -45,9 +42,6 @@ protected:
     /// @param fileName 文件名
 	/// @param hasHead 第一行是否为表头
     void readCSV(const QString& fileName, bool hasHead = true);
-	/// @brief 读取数控程序
-	/// @param fileName 文件名
-    void readNC(const QString& fileName);
 
     /// @brief 三维点云拾取点处理事件
     /// @param id 点的索引id
@@ -84,7 +78,4 @@ private:
     Eigen::MatrixXf m_oriMat;
 	/// @brief 数据表头
     QStringList m_head;
-
-	/// @brief 读取器
-    NC::Toolpath::AbstractrReader* m_ncReader;
 };

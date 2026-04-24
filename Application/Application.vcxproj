@@ -48,20 +48,16 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(QtMsBuild)\Qt.props" />
-    <Import Project="..\..\..\Library\eigen-3.4.0.props" />
     <Import Project="..\..\..\Library\VTK-8.2.0_d.props" />
     <Import Project="..\QtRibbon\QtRibbon.props" />
-    <Import Project="..\Library\Library.props" />
-    <Import Project="..\..\NCToolBox\QtNCToolBox\QtNCToolBox.props" />
+    <Import Project="..\QtView\QtView.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(QtMsBuild)\Qt.props" />
     <Import Project="..\..\..\Library\VTK-8.2.0.props" />
-    <Import Project="..\..\..\Library\eigen-3.4.0.props" />
     <Import Project="..\QtRibbon\QtRibbon.props" />
-    <Import Project="..\Library\Library.props" />
-    <Import Project="..\..\NCToolBox\QtNCToolBox\QtNCToolBox.props" />
+    <Import Project="..\QtView\QtView.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
@@ -75,12 +71,12 @@
       <AdditionalLibraryDirectories>$(VTK)\build\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Math;.\NC;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <AdditionalIncludeDirectories>.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\Math;.\NC;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -114,6 +110,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Math\EigenTools.cpp" />
     <ClCompile Include="Ribbon.cpp" />
     <QtRcc Include="Resource.qrc" />
     <QtUic Include="MainWindow.ui" />
@@ -125,6 +122,9 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Ribbon.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Math\EigenTools.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

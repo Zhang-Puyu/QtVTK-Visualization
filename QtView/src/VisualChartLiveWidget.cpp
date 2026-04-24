@@ -4,8 +4,6 @@
 
 #include "qdebug.h"
 
-#include "EigenExtention.hpp"
-
 QT_CHARTS_USE_NAMESPACE
 
 #pragma execution_character_set("utf-8")
@@ -43,8 +41,8 @@ void VisualChartLiveWidget::startLiveView()
 
 	// ÉèÖÃ×ø±êÖá·¶Î§
 	double minX, maxX, minY, maxY;
-	Eigen::coeffRange(m_liveX, minX, maxX, 1.8);
-	Eigen::coeffRange(m_liveY, minY, maxY, 1.8);
+	propRange(m_liveX, minX, maxX, 1.8);
+	propRange(m_liveY, minY, maxY, 1.8);
 	m_axisX->setRange(minX, maxX);
 	m_axisY->setRange(minY, maxY);
 

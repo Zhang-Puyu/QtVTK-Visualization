@@ -7,8 +7,7 @@
 #include "qlabel.h"
 #include "qmessagebox.h"
 
-#include "EigenExtention.hpp"
-#include "StringExtension.hpp"
+#include "EigenTools.h"
 
 #pragma execution_character_set("utf-8")
 
@@ -60,10 +59,10 @@ MainWindow::MainWindow(QWidget* parent)
 
 
 	// 设置点尺寸
-	connect(ri->spinPointSize, QOverload<int>::of(&QSpinBox::valueChanged), ui->visualCloudWidget, &VisualCloudWidget::setPointsSize);
-	ui->visualCloudWidget->setPointsSize(ri->spinPointSize->value());
-	connect(ri->spinPointSize, QOverload<int>::of(&QSpinBox::valueChanged), ui->visualChartWidget, &VisualChartWidget::setPointsSize);
-	ui->visualChartWidget->setPointsSize(ri->spinPointSize->value());
+	connect(ri->spinPointSize, QOverload<int>::of(&QSpinBox::valueChanged), ui->visualCloudWidget, &VisualCloudWidget::setMarkerSize);
+	ui->visualCloudWidget->setMarkerSize(ri->spinPointSize->value());
+	connect(ri->spinPointSize, QOverload<int>::of(&QSpinBox::valueChanged), ui->visualChartWidget, &VisualChartWidget::setMarkerSize);
+	ui->visualChartWidget->setMarkerSize(ri->spinPointSize->value());
 
 	// 设置拾取点尺寸
 	connect(ri->spinPickedPointSize, QOverload<int>::of(&QSpinBox::valueChanged), ui->visualCloudWidget, &VisualCloudWidget::setPickedPointSize);
@@ -79,11 +78,16 @@ MainWindow::MainWindow(QWidget* parent)
 		refreshView();
 		});
 	connect(ri->buttonAddSeries, &QToolButton::clicked, this, &MainWindow::refreshView);
+	connect(ri->radioAddScatterSeries, &QRadioButton::toggled, [=](bool check) {
+		ui->visualChartWidget->setSeriesType(check ? SeriesType::SCATTER : SeriesType::LINE);
+		});
+	emit ri->radioAddScatterSeries->toggled(true);
+	emit ri->radioAddLineSeries->toggled(false);
 
 	// 版权声明
 	QLabel* copyright = new QLabel("Copyright (C) 2024 西北工业大学-张璞玉. a11 rights reserved.");
 	ui->statusBar->addPermanentWidget(copyright);
-	ui->statusBar->showMessage(tr("支持的文件类型：stl csv nc cls mpf"));
+	ui->statusBar->showMessage(tr("支持的文件类型：stl csv"));
 
 	// 导出显示的点
 	connect(ri->buttonExportVisualPoints, &QToolButton::clicked, this, &MainWindow::exportVisualPoints);
@@ -120,15 +124,17 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(ri->radioCloud, &QRadioButton::toggled, [=](bool check) {
 		if (check) ui->stackedWidget->setCurrentWidget(ui->visualCloudWidget); 
 		else       ui->stackedWidget->setCurrentWidget(ui->visualChartWidget);
+		refreshView();
 		});
 	emit ri->radioCloud->toggled(true); // 默认显示三维点云
+	emit ri->radioChart->toggled(false);
 }
 
 
 void MainWindow::open()
 {
 	QString fileName = QFileDialog::getOpenFileName(this, tr("打开文件"), "",
-		tr("CSV Files (*.csv);;STL Files (*.stl);;CNC (*.cls *.nc *.mpf)"));
+		tr("CSV Files (*.csv);;STL Files (*.stl);;"));
 	if (!fileName.isEmpty())
 		read(fileName);
 }
@@ -138,36 +144,16 @@ void MainWindow::read(const QString& fileName)
 	ui->statusBar->showMessage(QFileInfo(fileName).fileName());
 
 	if (fileName.toLower().endsWith(".stl"))	
-		ui->visualCloudWidget->visualizeStl(fileName);
+		ui->visualCloudWidget->visualizeSTL(fileName);
 	if (fileName.toLower().endsWith(".csv"))	
 		readCSV(fileName);
-	if (fileName.toLower().endsWith(".nc") || fileName.toLower().endsWith(".mpf"))
-	{
-		m_ncReader = new NC::Toolpath::ReadGCode();
-		readNC(fileName);
-	}
-	if (fileName.toLower().endsWith(".cls"))
-	{
-		m_ncReader = new NC::Toolpath::ReadAPT();
-		readNC(fileName);
-	}
 }
 
 void MainWindow::readCSV(const QString& fileName, bool hasHead)
 {
 	ui->visualChartWidget->setTitle(QFileInfo(fileName).baseName());
 
-    Eigen::readCSV(m_oriMat, fileName, m_head, ",", ri->comboCodec->currentText());
-
-	readFinishHandler();
-}
-
-void MainWindow::readNC(const QString& fileName)
-{
-	ui->visualChartWidget->setTitle(QFileInfo(fileName).baseName());
-
-	m_ncReader->read(m_oriMat, fileName);
-	m_head = m_ncReader->head().split(',');
+    ::readCSV(m_oriMat, fileName, m_head, ",", ri->comboCodec->currentText());
 
 	readFinishHandler();
 }
@@ -182,7 +168,7 @@ void MainWindow::readFinishHandler()
 
 	// 添加一列，值为行号
 	m_head.append("index");
-	Eigen::addMatrixColumn(m_oriMat);
+	addColumn(m_oriMat);
 
 	ri->comboX->clear(); ri->comboX->addItems(m_head);
 	ri->comboY->clear(); ri->comboY->addItems(m_head);
@@ -278,7 +264,7 @@ void MainWindow::exportVisualPoints()
 		QString fileName = QFileDialog::getSaveFileName(this, tr("导出所显示的点"), "", tr("CSV Files (*.csv)"));
 		if (!fileName.isEmpty())
 		{
-			Eigen::writeCSV(m_visualMat, fileName, m_head.join(','), ",", ri->comboCodec->currentText());
+			writeCSV(m_visualMat, fileName, m_head.join(','), ",", ri->comboCodec->currentText());
 			QMessageBox::information(this, "导出成功", "导出到 " + fileName);
 		}
 	}

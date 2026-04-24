@@ -1,8 +1,6 @@
 #pragma once
 
 #include "VisualCloudWidget.h"
-#include "StringExtension.hpp"
-
 #include "AbstractLiveWidget.h"
 
 class VisualCloudLiveWidget : public VisualCloudWidget, public AbstractLiveWidget
@@ -18,12 +16,8 @@ public:
 
 	/// @brief …Ë÷√ ˝æ›
 	void setData(const Eigen::VectorXf& X, const Eigen::VectorXf& Y, const Eigen::VectorXf& Z,
-		const Eigen::VectorXf& F, 
-		const QString& fName = "Scalar") 
-	{
-		m_liveX = X; m_liveY = Y; m_liveZ = Z; m_liveF = F;
-		m_scalarbarActor->SetTitle(String::hasChinese(fName) ? "Scalar" : fName.toLocal8Bit());
-	}
+		const Eigen::VectorXf& F,
+		const QString& fName = "Scalar");
 
 private:
 	/// @brief ‰÷»æ

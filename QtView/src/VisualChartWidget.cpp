@@ -9,8 +9,9 @@
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QVBoxLayout>
 #include <QGraphicsLayout>
+#include <QDebug>
 
-#include "EigenExtention.hpp"
+
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -45,7 +46,7 @@ VisualChartWidget::VisualChartWidget(QWidget* parent)
 
 	// 拾取点
 	m_chart->addSeries(m_pickedPointSeries);
-	m_pickedPointSeries->setMarkerSize(m_markerSize + 3);
+	m_pickedPointSeries->setMarkerSize(m_markerSize * 2);
 	m_pickedPointSeries->setColor(Qt::red);
 	m_pickedPointSeries->setUseOpenGL(true);
 	m_pickedPointSeries->attachAxis(m_axisX);
@@ -61,10 +62,10 @@ VisualChartWidget::~VisualChartWidget()
 
 void VisualChartWidget::clear()
 {
-	m_chart->removeAllSeries();
-
 	m_pickedPointSeries->clear();
-	m_chart->addSeries(m_pickedPointSeries);
+
+	foreach (QXYSeries* series, m_seriesMap.values())
+		m_chart->removeSeries(series);
 
 	m_chart->setTitle("散点图");
 
@@ -77,27 +78,41 @@ void VisualChartWidget::clear()
 
 void VisualChartWidget::pointPickedHandler(const QPointF& point)
 {
-	m_pickedPointSeries->clear();
-	m_pickedPointSeries->append(point);
+	m_pickedPointSeries->replace(m_lastPickedPoint, point);
+	m_lastPickedPoint = point;
 	
 	this->update();
 }
 
 void VisualChartWidget::visualizePoints(const Eigen::VectorXf& X, const Eigen::VectorXf& Y,
-    const QString& seriesName, const QColor& color)
+    const QString& seriesName, QColor color)
 {
-	QScatterSeries* series = new QtCharts::QScatterSeries();
+	qDebug() << "inite viusal";
+
+	color = color == Qt::white ? nextColor() : color;
+
+	QXYSeries* series;
+	if (m_seriesType == SCATTER)
+	{
+		series = new QtCharts::QScatterSeries();
+		series->setColor(color);
+		dynamic_cast<QScatterSeries*>(series)->setMarkerSize(m_markerSize);
+	}
+		
+	else if (m_seriesType == LINE)
+	{
+		series = new QtCharts::QLineSeries();
+		QPen pen(color);
+		pen.setWidth(m_markerSize);
+        series->setPen(pen);
+	}
+	else return;
+
+        
     m_chart->addSeries(series);
     m_seriesMap.insert(seriesName, series);
 
 	series->setName(seriesName.isEmpty() ? QString("series") + QString::number(m_seriesMap.size()) : seriesName);
-    series->setMarkerSize(m_markerSize);
-
-    if (color == Qt::white)
-        series->setColor(nextColor());
-    else
-		series->setColor(color);
-
 	series->setPointLabelsVisible(m_pointLabelVisible);
     series->setPointLabelsFormat("(@xPoint, @yPoint)");
     series->setPointLabelsClipping(true);
@@ -106,16 +121,19 @@ void VisualChartWidget::visualizePoints(const Eigen::VectorXf& X, const Eigen::V
 	series->attachAxis(m_axisY);
 
 	int size = std::min(X.size(), Y.size());
+	QList<QPointF> points;
     for (int i = 0; i < size; ++i)
-        series->append(X(i), Y(i));
+        //series->append(X(i), Y(i));
+		points << QPointF(X(i), Y(i));
+	series->replace(points);
 
 	// 连接点击信号
-	connect(series, &QScatterSeries::clicked, this, &VisualChartWidget::pointPicked);
+	connect(series, &QXYSeries::clicked, this, &VisualChartWidget::pointPicked);
 
 	// 设置坐标轴范围
 	double minX, maxX, minY, maxY;
-	Eigen::coeffRange(X, minX, maxX, 1.8);
-	Eigen::coeffRange(Y, minY, maxY, 1.8);
+	propRange(X, minX, maxX, 1.8);
+	propRange(Y, minY, maxY, 1.8);
 	minX = std::min(minX, m_axisX->min());
 	maxX = std::max(maxX, m_axisX->max());
 	minY = std::min(minY, m_axisY->min());

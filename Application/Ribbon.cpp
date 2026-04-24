@@ -74,15 +74,23 @@ Ribbon::Ribbon(QWidget* parent)
 	widget = new QWidget;
 	gridLayout = new QGridLayout(widget);
 	gridLayout->setContentsMargins(3, 4, 3, 4);
-	gridLayout->addWidget(new QLabel(tr("X")), 0, 0); gridLayout->addWidget(comboX, 0, 1);
-	gridLayout->addWidget(new QLabel(tr("Y")), 1, 0); gridLayout->addWidget(comboY, 1, 1);
-	gridLayout->addWidget(new QLabel(tr(" Z")), 0, 3); gridLayout->addWidget(comboZ, 0, 4);
-	gridLayout->addWidget(new QLabel(tr(" F")), 1, 3); gridLayout->addWidget(comboF, 1, 4);
+	QLabel* labelx = new QLabel(tr("X"));
+    QLabel* labely = new QLabel(tr("Y"));
+    QLabel* labelz = new QLabel(tr(" Z"));
+    QLabel* labelf = new QLabel(tr(" F"));
+	gridLayout->addWidget(labelx, 0, 0); gridLayout->addWidget(comboX, 0, 1);
+	gridLayout->addWidget(labely, 1, 0); gridLayout->addWidget(comboY, 1, 1);
+	gridLayout->addWidget(labelz, 0, 3); gridLayout->addWidget(comboZ, 0, 4);
+	gridLayout->addWidget(labelf, 1, 3); gridLayout->addWidget(comboF, 1, 4);
 
 	// 仅显示三维点云时
 	connect(radioCloud, &QRadioButton::toggled, [=](bool checked) {
 		comboZ->setEnabled(checked);
 		comboF->setEnabled(checked);
+		comboZ->setVisible(checked);
+        comboF->setVisible(checked);
+		labelz->setVisible(checked);
+        labelf->setVisible(checked);
 		});
 
 	ribbonTabWidget->addWidget("显示", "显示对象", widget);
@@ -120,11 +128,28 @@ Ribbon::Ribbon(QWidget* parent)
 	buttonAddSeries->setIcon(QIcon(":/icons/icons/添加.svg"));
 	ribbonTabWidget->addButton("显示", "显示", buttonAddSeries);
 
+	widget = new QWidget;
+	gridLayout = new QGridLayout(widget);
+	gridLayout->setContentsMargins(3, 7, 3, 9);
+	radioGroup = new QButtonGroup();
+	radioGroup->addButton(radioAddScatterSeries, 0);
+	radioGroup->addButton(radioAddLineSeries, 1);
+	radioGroup->setExclusive(true);
+
+	gridLayout->addWidget(radioAddScatterSeries, 0, 0);
+	gridLayout->addWidget(radioAddLineSeries, 1, 0);
+
+	radioAddScatterSeries->setChecked(true);
+
+	ribbonTabWidget->addWidget("显示", "显示", widget);
+
 	// 仅显示二维图像时
 	connect(radioChart, &QRadioButton::toggled, [=](bool checked) {
 		buttonAddSeries->setEnabled(checked);
+		buttonAddSeries->setVisible(checked);
+		widget->setEnabled(checked);
+        widget->setVisible(checked);
 		});
-	buttonAddSeries->setEnabled(false);
 
 	/*设置**************************************************************/
 
@@ -144,7 +169,8 @@ Ribbon::Ribbon(QWidget* parent)
 
 	// 仅显示三维点云时
 	connect(radioCloud, &QRadioButton::toggled, [=](bool checked) {
-		menuColor->setEnabled(checked);
+		buttonBackgroundColor->setEnabled(checked);
+        buttonBackgroundColor->setVisible(checked);
 		});
 
 	buttonBackgroundImage->setText(tr("图片"));
@@ -165,8 +191,10 @@ Ribbon::Ribbon(QWidget* parent)
 
 	// 仅显示三维点云时
 	connect(radioCloud, &QRadioButton::toggled, [=](bool checked) {
-		checkAxisVisibility->setEnabled(checked);
-		checkScalarbarVisibility->setEnabled(checked);
+		//checkAxisVisibility->setEnabled(checked);
+		//checkScalarbarVisibility->setEnabled(checked);
+		ribbonTabWidget->group("设置", "辅助")->setEnabled(checked);
+		ribbonTabWidget->group("设置", "辅助")->setVisible(checked);
 		});
 
 	ribbonTabWidget->addWidget("设置", "辅助", widget);
@@ -190,7 +218,7 @@ Ribbon::Ribbon(QWidget* parent)
 	buttonPickPoint->setIcon(QIcon(":/icons/icons/跳转.svg"));
 	buttonPickPoint->setToolTip(tr("按左右方向键可跳转选中到前后点，按上下方向键可跳转选中到首尾点"));
 
-	QMenu* menuPick = new QMenu("跳转");
+	QMenu* menuPick = new QMenu("拾取");
 	menuPick->addAction(actionPickFirstPoint); menuPick->addAction(actionPickLastPoint);
 	menuPick->addAction(actionPickMaxXPoint); menuPick->addAction(actionPickMinXPoint);
 	menuPick->addAction(actionPickMaxYPoint); menuPick->addAction(actionPickMinYPoint);
@@ -200,11 +228,12 @@ Ribbon::Ribbon(QWidget* parent)
 	buttonPickPoint->setPopupMode(QToolButton::MenuButtonPopup);
 	buttonPickPoint->setMenu(menuPick);
 
-	ribbonTabWidget->addButton("设置", "跳转", buttonPickPoint);
+	ribbonTabWidget->addButton("设置", "拾取", buttonPickPoint);
 
 	// 仅显示三维点云时
 	connect(radioCloud, &QRadioButton::toggled, [=](bool checked) {
-		menuPick->setEnabled(checked);
+		ribbonTabWidget->group("设置", "拾取")->setEnabled(checked);
+		ribbonTabWidget->group("设置", "拾取")->setVisible(checked);
 		});
 
 	/*动态显示**************************************************************/

@@ -51,7 +51,8 @@ VTK_MODULE_INIT(vtkRenderingVolumeOpenGL2);
 
 #include "InteractorStyle.h"
 
-/// @brief X、Y、Z、特征值的最值对应点的索引集合
+
+/// @brief X、Y、Z、特征值的最值对应点的索引结构体
 struct ValueRangeIndexes
 {
     unsigned int x = 0, y = 0, z = 0, f = 0;
@@ -73,12 +74,12 @@ public:
         const Eigen::VectorXf& F, const QString& fName = "Scalar");
 
     /// @brief 显示stl文件
-    void visualizeStl(const QString& fileName);
+    void visualizeSTL(const QString& fileName);
 
     /// @brief 清除刀轨
     void hidePointsView();
     /// @brief 清空stl
-    void clearStlsView();
+    void clearSTLsView();
     /// @brief 清空全部
     void clear();
 
@@ -92,14 +93,20 @@ public:
     void setBackgroundImage(const QString& imageFile);
 
     /// @brief 设置点大小
-    void setPointsSize(int size);
+    void setMarkerSize(int size);
     /// @brief 设置拾取点大小
     void setPickedPointSize(int size);
 
     /// @brief 设置色柱可见性
-    void setScalarbarVisibility(bool visibility) { m_scalarbarActor->SetVisibility(visibility); this->GetRenderWindow()->Render(); }
+    void setScalarbarVisibility(bool visibility) { 
+        m_scalarbarActor->SetVisibility(visibility); 
+        this->GetRenderWindow()->Render(); 
+    }
 	/// @brief 设置坐标轴可见性
-	void setAxisVisibility(bool visibility)      { m_axesActor->SetVisibility(visibility);      this->GetRenderWindow()->Render(); }
+	void setAxisVisibility(bool visibility) {
+        m_axesActor->SetVisibility(visibility);      
+        this->GetRenderWindow()->Render(); 
+    }
 
     /// @brief 拾取点
     void pick(const vtkIdType& id);
@@ -129,7 +136,9 @@ protected:
     QVector<vtkSmartPointer<vtkActor>> m_stlActors;
 
 	/// @brief 最后一个点的索引
-    const vtkIdType lastPointId() { return m_points->GetNumberOfPoints() - 1; }
+    inline const vtkIdType lastPointId() { 
+        return m_points->GetNumberOfPoints() - 1;
+    }
 	/// @brief 第一个点的索引
     const vtkIdType firstPointId = 0;
 	/// @brief X、Y、Z、特征值分别最大的点的索引集合
@@ -143,6 +152,11 @@ protected:
     virtual void keyPressEvent(QKeyEvent* event)   override;
     // 键盘抬起事件
     virtual void keyReleaseEvent(QKeyEvent* event) override;
+
+    /// @brief 判断字符串是否包含中文字符
+    inline static bool hasChinese(const QString& str) {
+        return str.contains(QRegExp("[\\x4e00-\\x9fa5]+"));
+    }
 
 signals:
     /// @brief 拾取点信号

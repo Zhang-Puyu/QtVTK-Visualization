@@ -34,6 +34,9 @@ public:
 	QToolButton* buttonRefreshView = new QToolButton;
 
 	QToolButton* buttonAddSeries = new QToolButton;
+	QRadioButton* radioAddScatterSeries = new QRadioButton(tr("…¢µ„Õº"));
+	QRadioButton* radioAddLineSeries    = new QRadioButton(tr("’€œﬂÕº"));
+
 
 	QToolButton* buttonBackgroundColor = new QToolButton;
 	QAction* actionBackgroundColorUp   = new QAction;

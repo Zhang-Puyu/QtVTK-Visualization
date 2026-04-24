@@ -16,15 +16,16 @@ public:
 
 	/// @brief ÉèÖÃÊý¾Ý
 	void setData(const Eigen::VectorXf& X, const Eigen::VectorXf& Y, 
-		const QString& seriesName)
-	{
+		const QString& seriesName) {
 		m_liveX = X; m_liveY = Y;
 		m_liveSeriesName = seriesName;
 	}
 
 private:
 	/// @brief äÖÈ¾
-	void render() override { this->update(); }
+	inline void render() override { 
+		this->update(); 
+	}
 
 	Eigen::VectorXf m_liveX, m_liveY;
 

@@ -34,7 +34,7 @@ class PointPickerSignalSender : public QObject
     friend class PointPickerInteractorStyle;
 
 private:
-    void sendPickedPointId(const vtkIdType& id) {
+    inline void sendPickedPointId(const vtkIdType& id) {
         emit sendPickedPointIdSignal(id);
     }
 

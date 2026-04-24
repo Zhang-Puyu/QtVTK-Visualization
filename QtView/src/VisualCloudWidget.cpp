@@ -33,12 +33,7 @@
 
 #include "VisualCloudWidget.h"
 
-#include "EigenExtention.hpp"
-#include "StringExtension.hpp"
-
 #pragma execution_character_set("utf-8")
-
-using namespace Eigen;
 
 VisualCloudWidget::VisualCloudWidget(QWidget* parent)
 	: QVTKOpenGLWidget(parent)
@@ -115,7 +110,7 @@ VisualCloudWidget::~VisualCloudWidget()
 {
 }
 
-void VisualCloudWidget::visualizePoints(const VectorXf& X, const VectorXf& Y, const VectorXf& Z, 
+void VisualCloudWidget::visualizePoints(const Eigen::VectorXf& X, const Eigen::VectorXf& Y, const Eigen::VectorXf& Z,
 	const QColor& color)
 {
 	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
@@ -153,8 +148,8 @@ void VisualCloudWidget::visualizePoints(const VectorXf& X, const VectorXf& Y, co
 	this->GetRenderWindow()->Render();
 }
 
-void VisualCloudWidget::visualizePoints(const VectorXf& X, const VectorXf& Y, const VectorXf& Z, 
-	const VectorXf& F, const QString& fName)
+void VisualCloudWidget::visualizePoints(const Eigen::VectorXf& X, const Eigen::VectorXf& Y, const Eigen::VectorXf& Z,
+	const Eigen::VectorXf& F, const QString& fName)
 {
 	// 几何数据  拓扑数据  属性数据
 	vtkSmartPointer<vtkPoints>	    points	   = vtkSmartPointer<vtkPoints>::New();
@@ -191,7 +186,7 @@ void VisualCloudWidget::visualizePoints(const VectorXf& X, const VectorXf& Y, co
 	m_lookupTable->SetRange(minScalar, maxScalar);
 	m_lookupTable->Build();
 
-	if (String::hasChinese(fName))
+	if (hasChinese(fName))
 	{
 		QMessageBox::warning(this, "警告", "ScalarBar标题不支持显示当前字符", QMessageBox::Ok);
 		m_scalarbarActor->SetTitle("Scalar");
@@ -215,7 +210,7 @@ void VisualCloudWidget::visualizePoints(const VectorXf& X, const VectorXf& Y, co
 	this->GetRenderWindow()->Render();
 }
 
-void VisualCloudWidget::visualizeStl(const QString& fileName)
+void VisualCloudWidget::visualizeSTL(const QString& fileName)
 {
 	vtkSmartPointer<vtkSTLReader> stlReader = vtkSmartPointer<vtkSTLReader>::New();
 	stlReader->SetFileName(fileName.toLocal8Bit());
@@ -243,7 +238,7 @@ void VisualCloudWidget::hidePointsView()
 	this->GetRenderWindow()->Render();
 }
 
-void VisualCloudWidget::clearStlsView()
+void VisualCloudWidget::clearSTLsView()
 {
 	for (auto& actor : m_stlActors)
 		m_renderer->RemoveActor(actor);
@@ -255,7 +250,7 @@ void VisualCloudWidget::clearStlsView()
 void VisualCloudWidget::clear()
 {
 	hidePointsView();
-	clearStlsView();
+	clearSTLsView();
 
 	this->GetRenderWindow()->Render();
 }
@@ -281,7 +276,7 @@ void VisualCloudWidget::setBackgroundColorDown(const QColor& color)
 
 void VisualCloudWidget::setBackgroundImage(const QString& imageFile)
 {
-	if (String::hasChinese(imageFile))
+	if (hasChinese(imageFile))
 	{
 		QMessageBox::critical(this, "错误", "垃圾VTK读不了中文文件", QMessageBox::Ok);
 		return;
@@ -336,7 +331,7 @@ void VisualCloudWidget::setBackgroundImage(const QString& imageFile)
 	this->GetRenderWindow()->Render();
 }
 
-void VisualCloudWidget::setPointsSize(int size)
+void VisualCloudWidget::setMarkerSize(int size)
 {
 	m_pointsActor->GetProperty()->SetPointSize(size > 0 ? size : 1);
 	this->GetRenderWindow()->Render();

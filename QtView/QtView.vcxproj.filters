@@ -8,45 +8,51 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
     </Filter>
+    <Filter Include="Views\QtChart">
+      <UniqueIdentifier>{847048cf-6c31-425b-bb44-a28d71e791f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views\QtVTK">
+      <UniqueIdentifier>{6141c7bd-1eb7-4a65-a964-dfb1ead8430b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="include\InteractorStyle.h">
       <Filter>InteractorStyle</Filter>
     </QtMoc>
-    <QtMoc Include="include\VisualCloudLiveWidget.h">
-      <Filter>Views</Filter>
-    </QtMoc>
-    <QtMoc Include="include\VisualCloudWidget.h">
-      <Filter>Views</Filter>
-    </QtMoc>
     <QtMoc Include="include\QFlexibleChartView.h">
-      <Filter>Views</Filter>
-    </QtMoc>
-    <QtMoc Include="include\VisualChartWidget.h">
-      <Filter>Views</Filter>
+      <Filter>Views\QtChart</Filter>
     </QtMoc>
     <QtMoc Include="include\VisualChartLiveWidget.h">
-      <Filter>Views</Filter>
+      <Filter>Views\QtChart</Filter>
+    </QtMoc>
+    <QtMoc Include="include\VisualChartWidget.h">
+      <Filter>Views\QtChart</Filter>
+    </QtMoc>
+    <QtMoc Include="include\VisualCloudLiveWidget.h">
+      <Filter>Views\QtVTK</Filter>
+    </QtMoc>
+    <QtMoc Include="include\VisualCloudWidget.h">
+      <Filter>Views\QtVTK</Filter>
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\VisualCloudLiveWidget.cpp">
-      <Filter>Views</Filter>
-    </ClCompile>
-    <ClCompile Include="src\VisualCloudWidget.cpp">
-      <Filter>Views</Filter>
-    </ClCompile>
     <ClCompile Include="src\InteractorStyle.cpp">
       <Filter>InteractorStyle</Filter>
     </ClCompile>
     <ClCompile Include="src\QFlexibleChartView.cpp">
-      <Filter>Views</Filter>
-    </ClCompile>
-    <ClCompile Include="src\VisualChartWidget.cpp">
-      <Filter>Views</Filter>
+      <Filter>Views\QtChart</Filter>
     </ClCompile>
     <ClCompile Include="src\VisualChartLiveWidget.cpp">
-      <Filter>Views</Filter>
+      <Filter>Views\QtChart</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VisualChartWidget.cpp">
+      <Filter>Views\QtChart</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VisualCloudLiveWidget.cpp">
+      <Filter>Views\QtVTK</Filter>
+    </ClCompile>
+    <ClCompile Include="src\VisualCloudWidget.cpp">
+      <Filter>Views\QtVTK</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
